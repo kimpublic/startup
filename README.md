@@ -1,6 +1,6 @@
 ### This repository has been created on Jan-13-2025
 
-# Rock, Paper, Scissors, Minus One with Water Gun
+# Rock, Paper, Scissors, Minus One Game
 
 [My Notes](notes.md)
 
