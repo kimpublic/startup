@@ -1,16 +1,11 @@
 ### This repository has been created on Jan-13-2025
-# Your startup name here
+
+# Rock, Paper, Scissors, Minus One with Water Gun
 
 [My Notes](notes.md)
 
-A brief description of the application here. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+This application provides the functionality to play a game called ***Rock-Paper-Scissors One-Out***, which is popular in Korea. It will include features to post game results and share the game with friends.
 
-
-> [!NOTE]
->  This is a template for your startup application. You must modify this `README.md` file for each phase of your development. You only need to fill in the section for each deliverable when that deliverable is submitted in Canvas. Without completing the section for a deliverable, the TA will not know what to look for when grading your submission. Feel free to add additional information to each deliverable description, but make sure you at least have the list of rubric items and a description of what you did for each item.
-
-> [!NOTE]
->  If you are not familiar with Markdown then you should review the [documentation](https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax) before continuing.
 
 ## 🚀 Specification Deliverable
 
@@ -19,45 +14,77 @@ A brief description of the application here. Lorem ipsum dolor sit amet, consect
 
 For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
 
-- [ ] Proper use of Markdown
-- [ ] A concise and compelling elevator pitch
-- [ ] Description of key features
-- [ ] Description of how you will use each technology
-- [ ] One or more rough sketches of your application. Images must be embedded in this file using Markdown image references.
+- [x] Proper use of Markdown
+- [x] A concise and compelling elevator pitch
+- [x] Description of key features
+- [x] Description of how you will use each technology
+- [x] One or more rough sketches of your application. Images must be embedded in this file using Markdown image references.
 
 ### Elevator pitch
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+Have you heard of 'Rock-Paper-Scissors, Minus One'? This is a unique twist on the traditional game, rock-paper-scissors, made famous by the global Netflix hit 'Squid Game'. Now, you will face off against characters from Squid Game in intense, strategic battles. Victory will earn you a place in the 'Hall of Fame,' where your achievements will be remembered forever. Winners also gain the exclusive privilege of inviting their friends to join this extraordinary challenge. A thrilling game where a simple choice can lead to ultimate glory—dare to play now!
 
 ### Design
 
-![Design image](placeholder.png)
+![Design image](cs260-minjoong-design.png)
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
 
 ```mermaid
 sequenceDiagram
-    actor You
-    actor Website
-    You->>Website: Replace this with your design
+    participant Player as Player (User)
+    participant Browser as Browser (Frontend)
+    participant NodeJS as Node.js Server
+    participant DB as Database
+
+    Player->>Browser: Start the game
+    Browser->>NodeJS: Request to create a new game session
+    NodeJS->>DB: Store new game session data
+    DB-->>NodeJS: Confirm session creation
+    NodeJS-->>Browser: Respond with game session ID
+
+    Player->>Browser: Select hands (Rock, Paper, Scissors)
+    Browser->>NodeJS: Send player's choices
+    NodeJS->>NodeJS: Process game logic (compare choices)
+    NodeJS->>DB: Store game results
+    DB-->>NodeJS: Confirm result storage
+    NodeJS-->>Browser: Send round result and updated score
+
+    Player->>Browser: Check updated scoreboard
+    Browser->>NodeJS: Request player rankings
+    NodeJS->>DB: Fetch player rankings
+    DB-->>NodeJS: Return ranking data
+    NodeJS-->>Browser: Respond with ranking data
+    Browser-->>Player: Display rankings
 ```
 
 ### Key features
 
-- Describe your key feature
-- Describe your key feature
-- Describe your key feature
+- log-in with user ID and password
+- Instruction about how to play
+- Start a game session and play with buttons
+- Real-time play with the programmed game-partner
+- Results display
+- Hall of Fame with scores from users' plays
+- Ability to share game invitations to friends
 
 ### Technologies
 
 I am going to use the required technologies in the following ways.
 
-- **HTML** - Description here
-- **CSS** - Description here
-- **React** - Description here
-- **Service** - Description here
-- **DB/Login** - Description here
-- **WebSocket** - Description here
+- **HTML** - Defines the basic structure of the web application. It will be used to design the layout of the home-login screen, game screen inclduing buttons, result screen, how-to-play screen, about screen, and scoreboards.
+- **CSS** - Specifies the style of the game screen. It enhances user experience by applying button colors, layouts, animations, and responsive design.
+- **React** - React will manage each part of the game with a component-based structure. It dynamically handles user selections, game states, and scoreboard updates.
+- **JavaScript** - Implements the functionality of the game. It calculates results based on user input and updates the game state accordingly.
+- **Node.js** - Manages the backend server and handles data processing for the game. It stores user scores and records or calculates game results.
+- **Service** - Backend service with endpoints for:
+    - Login
+    - Creating game sessions
+    - Submitting player choices
+    - Retrieving game scores
+    - Generating invite links
+- **DB/Login** - Stores and manages user-ID, game records, and user scores. This ensures the persistence of win points and ranking data.
+- **WebSocket** - Ensures real-time updates for player actions and results.
 
 ## 🚀 AWS deliverable
 
