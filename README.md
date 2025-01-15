@@ -9,7 +9,7 @@ This application provides the functionality to play a game called ***Rock-Paper-
 
 ## 🚀 Specification Deliverable
 
-For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
+For this deliverable, I did the following. I checked the box `[x]` and added a description for things I completed.
 
 - [x] Proper use of Markdown
 - [x] A concise and compelling elevator pitch
@@ -75,7 +75,7 @@ I am going to use the required technologies in the following ways.
 - **JavaScript** - Implements the functionality of the game. It calculates results based on user input and updates the game state accordingly.
 - **Node.js** - Manages the backend server and handles data processing for the game. It stores user scores and records or calculates game results.
 - **Service** - Backend service with endpoints for:
-    - Login
+    - Login with Auth0 authentification API
     - Creating game sessions
     - Submitting player choices
     - Retrieving game scores
