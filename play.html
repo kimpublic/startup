@@ -21,7 +21,7 @@
                     <li><a href="index.html">Home</a></li>
                     <li><a href="how.html">How to Play</a></li>
                     <li><a href="play.html">Play</a></li>
-                    <li><a href="scores.html">Scores</a></li>
+                    <li><a href="halloffame.html">Hall of Fame</a></li>
                     <li><a href="about.html">About</a></li>
                 </menu>
             </nav>
@@ -31,7 +31,176 @@
         </header>
 
         <main>
-            
+            <!-- Player information -->
+            <div class="player-info">
+                Player: <span class="player-email">[Player's Email]</span>
+            </div>
+            <hr />
+
+            <!-- Game Status Display -->
+            <div class="game-status-board" style="
+                width: 600px; 
+                background-color: black; 
+                color: limegreen; 
+                text-align: center; 
+                font-size: 24px; 
+                font-weight: bold; 
+                padding: 10px 0; 
+                margin-bottom: 20px; 
+                border: 6px solid limegreen; 
+                border-radius: 5px;">
+                <span id="status-message">You win! Move onto the next round!</span>
+            </div>
+
+            <!-- Round display -->
+            <div class="round-info">
+                <h2>Round <span class="round-number">1</span></h2>
+            </div>
+
+            <!-- Game Agent display -->
+            <div class="game-agent">
+                <h3>Game Agent O</h3>
+                <div class="agent-box">
+
+                    <!-- Placeholder for Agent's image -->
+                    <img src="/sources/gameagentO.png" alt="Game Agent" height="150" />
+
+                    <span class="agent-choices">
+                        <table>
+                            <tr>
+                                <th>Left Hand</th>
+                                <th>Right Hand</th>
+                            </tr>
+                            <tr>
+                                <td class="agent-left">
+                                    <button class="choice rock" style="
+                                        width: 80px; 
+                                        height: 80px; 
+                                        padding: 10px; 
+                                        border: 5px solid green; 
+                                        border-radius: 5px;">
+                                        [Agent's Left Option]✊
+                                    </button>
+                                </td>
+                                <td class="agent-right">
+                                    <button class="choice paper" style="
+                                        width: 80px; 
+                                        height: 80px; 
+                                        padding: 10px; 
+                                        border: 2px solid lightgray; 
+                                        border-radius: 5px;">
+                                        [Agent's Right Option]✌️
+                                    </button>
+                                </td>
+                            </tr>
+                        </table>
+                    </span>
+                </div>
+            </div>
+
+            <!-- Timer -->
+            <div class="timer" style="display: inline-flex; align-items: center; gap: 10px;">
+                <!-- Clock Icon -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-clock" viewBox="0 0 16 16">
+                    <path d="M8 3.5a.5.5 0 0 1 .5.5v4h3a.5.5 0 0 1 0 1H8a.5.5 0 0 1-.5-.5V4a.5.5 0 0 1 .5-.5z" />
+                    <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm0-1A7 7 0 1 1 8 1a7 7 0 0 1 0 14z" />
+                </svg>
+  
+                <!-- Timer Bar -->
+                <div class="timer-bar" style="width: 300px; height: 20px; background-color: lightgray; border-radius: 5px; overflow: hidden;">
+                    <div class="progress" style="width: 100%; height: 100%; background-color: green; transition: width 5s linear;"></div>
+                </div>
+            </div>
+
+            <!-- Game Area -->
+            <div class="game-area">
+                <h2>You:</h2>
+                <div class="game-pad" style="
+                    display: flex; 
+                    justify-content: space-around; 
+                    align-items: center; 
+                    gap: 20px; 
+                    width: 600px; 
+                    height: 300px; 
+                    margin: 0 auto; 
+                    padding: 20px; 
+                    border: 2px solid lightgray; 
+                    border-radius: 10px; 
+                    box-sizing: border-box;">
+
+                    <!-- Left Hand Options -->
+                    <div class="left-options" style="display: flex; flex-direction: column; gap: 10px;">
+                        <button class="choice rock" style="
+                            width: 80px; 
+                            height: 80px; 
+                            padding: 10px; 
+                            border: 5px solid yellow;
+                            border-radius: 5px;">
+                            ✊
+                        </button>
+                        <button class="choice paper" style="
+                            width: 80px; 
+                            height: 80px; 
+                            padding: 10px; 
+                            border: 2px solid lightgray; 
+                            border-radius: 5px;">
+                            ✋
+                        </button>
+                        <button class="choice scissors" style="
+                            width: 80px; 
+                            height: 80px; 
+                            padding: 10px; 
+                            border: 2px solid lightgray; 
+                            border-radius: 5px;">
+                            ✌️
+                        </button>
+                    </div>
+  
+                    <!-- Right Hand Options -->
+                    <div class="right-options" style="display: flex; flex-direction: column; gap: 10px;">
+                        <button class="choice rock highlight-green" style="
+                            width: 80px; 
+                            height: 80px; 
+                            padding: 10px; 
+                            border: 2px solid lightgray; 
+                            border-radius: 5px;">
+                            ✊
+                        </button>
+                        <button class="choice paper highlight-yellow" style="
+                            width: 80px; 
+                            height: 80px; 
+                            padding: 10px; 
+                            border: 5px solid green;
+                            border-radius: 5px;">
+                            ✋
+                        </button>
+                        <button class="choice scissors" style="
+                            width: 80px; 
+                            height: 80px; 
+                            padding: 10px; 
+                            border: 2px solid lightgray; 
+                            border-radius: 5px;">
+                            ✌️
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Retry Button -->
+            <div class="retry-area">
+                <button class="retry-button" onclick="location.reload()">Retry</button>
+            </div>
+
+            <!-- invite Friends Button-->
+            <form method="get" action="invite.html">
+                <button type="submit">Send an invitation to friends as a winner</button>
+            </form>
+
+            <!-- Hall of Fame Button-->
+            <form method="get" action="halloffame.html">
+                <button type="submit">Check your name on the Hall of Fame</button>
+            </form>
+
         </main>
 
         <footer>

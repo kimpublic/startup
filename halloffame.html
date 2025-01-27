@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <!-- Tell browsers not to scale the viewport automatically -->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Rock Paper Scioosrs Minus One</title>
+        <link rel="icon" href="favicon.ico" />
+    </head>
+    <body>
+        <!-- Use header, main, and footer elements to give semantic structure -->
+        <header>
+        
+            <h1>Rock Paper Scissors Minus One<sup>&reg;</sup></h1>
+            <h2>"Sir, would you like to play a game with me?"</h2>
+
+            <!-- Navigation elements -->
+            <nav>
+            <!-- Menu is a semantic alternative to <ul> that represents an interaction -->
+                <menu>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="how.html">How to Play</a></li>
+                    <li><a href="play.html">Play</a></li>
+                    <li><a href="halloffame.html">Hall of Fame</a></li>
+                    <li><a href="about.html">About</a></li>
+                </menu>
+            </nav>
+
+            <!-- Since we don't have the ability to style we use old style HTML to give some visual formatting -->
+            <hr />
+        </header>
+
+        <main>
+            <h1>Behold thy glory in the Hall of Fame.</h1>
+
+            <div class="table-container" style="display: flex; justify-content: left; gap: 50px;">
+
+                <!-- 프론트맨을 처치한 횟수 순위 -->
+                <table border="1" style="border-collapse: collapse; text-align: center; width: 300px;">
+                  <caption style="font-weight: bold; margin-bottom: 10px;">Frontman Defeat Rankings</caption>
+                  <thead>
+                    <tr>
+                      <th>Rank</th>
+                      <th>Player</th>
+                      <th>Defeats</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr><td>1</td><td>John Doe</td><td>15</td></tr>
+                    <tr><td>2</td><td>Jane Smith</td><td>14</td></tr>
+                    <tr><td>3</td><td>Hyejin Kim</td><td>13</td></tr>
+                    <tr><td>4</td><td>Chris Park</td><td>12</td></tr>
+                    <tr><td>5</td><td>David Lee</td><td>11</td></tr>
+                    <tr><td>6</td><td>Emma Choi</td><td>10</td></tr>
+                    <tr><td>7</td><td>Michael Jeong</td><td>9</td></tr>
+                    <tr><td>8</td><td>Olivia Kim</td><td>8</td></tr>
+                    <tr><td>9</td><td>Sophia Han</td><td>7</td></tr>
+                    <tr><td>10</td><td>William Cho</td><td>6</td></tr>
+                  </tbody>
+                </table>
+            
+                <!-- 가장 많은 친구를 초대한 사람 순위 -->
+                <table border="1" style="border-collapse: collapse; text-align: center; width: 300px;">
+                  <caption style="font-weight: bold; margin-bottom: 10px;">Most Friends Invited</caption>
+                  <thead>
+                    <tr>
+                      <th>Rank</th>
+                      <th>Player</th>
+                      <th>Invites</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr><td>1</td><td>James Lee</td><td>20</td></tr>
+                    <tr><td>2</td><td>Sophia Kim</td><td>18</td></tr>
+                    <tr><td>3</td><td>Emily Park</td><td>17</td></tr>
+                    <tr><td>4</td><td>Daniel Choi</td><td>16</td></tr>
+                    <tr><td>5</td><td>Grace Han</td><td>15</td></tr>
+                    <tr><td>6</td><td>Lucas Jung</td><td>14</td></tr>
+                    <tr><td>7</td><td>Benjamin Cho</td><td>13</td></tr>
+                    <tr><td>8</td><td>Charlotte Kang</td><td>12</td></tr>
+                    <tr><td>9</td><td>Amelia Jeong</td><td>11</td></tr>
+                    <tr><td>10</td><td>Ethan Hwang</td><td>10</td></tr>
+                  </tbody>
+                </table>
+            
+              </div>
+            <br>
+            <form method="get" action="play.html">
+                <button type="submit">Play again to reclaim the throne</button>
+            </form>
+        </main>
+
+        <footer>
+            <hr />
+            <span class="text-reset">Author Name: Minjoong Kim</span>
+            <br />
+            <a href="https://github.com/kimpublic/startup">GitHub</a>
+        </footer>
+    </body>
+</html>
