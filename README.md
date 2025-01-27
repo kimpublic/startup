@@ -93,18 +93,14 @@ For this deliverable, I did the following. I checked the box `[x]` and added a d
 
 For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
 
-- index.html
-  ![index-html](/sources/readme/index-html.png)
-- how.html
-  ![index-html](/sources/readme/how-html.png)
-- play.html
-  ![index-html](/sources/readme/play-html.png)
-- halloffame.html
-  ![index-html](/sources/readme/halloffame-html.png)
-- about.html
-  ![index-html](/sources/readme/about-html.png)
-- invite.html
-  ![index-html](/sources/readme/invite-html.png)
+| **index.html**                       | **how.html**                        | **play.html**                       |
+|--------------------------------------|-------------------------------------|-------------------------------------|
+| ![index-html](/sources/readme/index-html.png) | ![how-html](/sources/readme/how-html.png) | ![play-html](/sources/readme/play-html.png) |
+
+| **halloffame.html**                  | **about.html**                      | **invite.html**                     |
+|--------------------------------------|-------------------------------------|-------------------------------------|
+| ![halloffame-html](/sources/readme/halloffame-html.png) | ![about-html](/sources/readme/about-html.png) | ![invite-html](/sources/readme/invite-html.png) |
+
 
 - [x] **HTML pages** - I added 6 HTML pages: (1) index.html - homepage, (2) how.html - Instructions about how to play the game, (3)    play.html - actual page for playing the game, (4) halloffame.html - displays players' scores, (5) about.html - includes a brief explanation about the game and the origin, game maker's message, and (6) invite.html - page that winners can send an invitation to their friends
 - [x] **Proper HTML element usage** - I hope I used them correctly.
