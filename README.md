@@ -63,7 +63,7 @@ sequenceDiagram
 - Real-time play with the programmed game-partner
 - Results display
 - Hall of Fame with scores from users' plays
-- Ability to share game invitations to friends
+- Ability to send game invitations to friends
 
 ### Technologies
 
@@ -93,15 +93,28 @@ For this deliverable, I did the following. I checked the box `[x]` and added a d
 
 For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
 
-- [ ] **HTML pages** - I did not complete this part of the deliverable.
-- [ ] **Proper HTML element usage** - I did not complete this part of the deliverable.
-- [ ] **Links** - I did not complete this part of the deliverable.
-- [ ] **Text** - I did not complete this part of the deliverable.
-- [ ] **3rd party API placeholder** - I did not complete this part of the deliverable.
-- [ ] **Images** - I did not complete this part of the deliverable.
-- [ ] **Login placeholder** - I did not complete this part of the deliverable.
-- [ ] **DB data placeholder** - I did not complete this part of the deliverable.
-- [ ] **WebSocket placeholder** - I did not complete this part of the deliverable.
+- index.html
+  ![index-html](/sources/readme/index-html.png)
+- how.html
+  ![index-html](/sources/readme/how-html.png)
+- play.html
+  ![index-html](/sources/readme/play-html.png)
+- halloffame.html
+  ![index-html](/sources/readme/halloffame-html.png)
+- about.html
+  ![index-html](/sources/readme/about-html.png)
+- invite.html
+  ![index-html](/sources/readme/invite-html.png)
+
+- [x] **HTML pages** - I added 6 HTML pages: (1) index.html - homepage, (2) how.html - Instructions about how to play the game, (3)    play.html - actual page for playing the game, (4) halloffame.html - displays players' scores, (5) about.html - includes a brief explanation about the game and the origin, game maker's message, and (6) invite.html - page that winners can send an invitation to their friends
+- [x] **Proper HTML element usage** - I hope I used them correctly.
+- [x] **Links** - Most HTML pages are connected to the Nav section. Only invite.html can be accessed from play.html because invite.html is only for the winners of the game.
+- [x] **Text** - I included some textual content to describe how my application will work.
+- [x] **3rd party API placeholder** - I need a login authentification API and email sending API. Login API on index.html with login features and email sending API on invite.html with the "send invitation" button.
+- [x] **Images** - I included some pictures.
+- [x] **Login placeholder** - index.html includes login placeholder. Login authentication API will also be used.
+- [x] **DB data placeholder** - The Hall of Fame will display the DB data of players' scores(how many times they beat the frontman and how many times the winners' friends accept the invitations)
+- [x] **WebSocket placeholder** - The game requires real-time communication with the server as the player's and server's random-oriented decisions need to be compared for the game result. In addition, the timer needs real-time communications with the server as well, and the invite button and the hall of fame button on play.html should be only accessible to the winners. The send invitation button on invite.html should be disabled after the winner sends one invitation.
 
 ## 🚀 CSS deliverable
 
