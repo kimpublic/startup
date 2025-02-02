@@ -8,6 +8,8 @@
     <link rel="icon" href="favicon.ico" />
     <!-- CSS 파일 링크 -->
     <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="invite.css" />
+
     </head>
     <body>
         <header>
@@ -33,32 +35,55 @@
 
         <main>
             <h1>Congratulations on Your Victory!</h1>
-            <p>
-                You have earned the privilege to invite one of your friends to this thrilling game.  
-                Please enter your friend's name and email address below.  
-                The invitation will be delivered to your friend by our agent.
-            </p>
+            <div class="text-container">
+                <p>
+                    You have earned the privilege to invite one of your friends to this thrilling game.  
+                    Please enter your friend's name and email address below.  
+                    The invitation will be delivered to your friend by our agent.
+                </p>
+            </div>
+            
+            <br>
           
-            <!-- 친구 이름 및및 이메일 작성 -->
+            <!-- 친구 이름 및 이메일 작성 -->
             <form>
-                <label for="friend-name">Friend's Name:</label>
-                <input type="text" id="friend-name" placeholder="Enter your friend's name">
-                <br><br>
-                <label for="friend-email">Friend's Email:</label>
-                <input type="email" id="friend-email" placeholder="Enter your friend's email">
-                <br><br>
+                <div>
+                    <label for="friend-name">Friend's Name :</label>
+                    <input type="text" id="friend-name" placeholder="Enter your friend's name">
+                </div>
+                
+                <div>
+                    <label for="friend-email">Friend's Email :</label>
+                    <input type="email" id="friend-email" placeholder="Enter your friend's email">
+                </div>
+                
                 <button type="submit">Send Invitation</button>
             </form>
-          
-            <p>
-                The number of friends who accept your invitation to this heart-pounding game will be recorded in the Hall of Fame.
-            </p>
+
+            <br>
+            
+            <div class="text-container">
+                <p>
+                    The number of friends who accept your invitation to this heart-pounding game will be recorded in the Hall of Fame.
+                </p>
+            </div>
+
+            <br>
+            
           
             <!-- 명예의 전당 및 다시 플레이 버튼 -->
-            <div>
-                <button onclick="location.href='halloffame.html'">Check Hall of Fame</button>
-                <button onclick="location.href='play.html'">Play Again</button>
-            </div>
+            <form method="get" action="halloffame.html">
+                <button type="submit">Check the Hall of Fame</button>
+            </form>
+            <br>
+            <form method="get" action="play.html">
+                <button type="submit">Play again</button>
+            </form>
+            
+            
+
+            
+            
         
           
         
