@@ -1,34 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <meta charset="UTF-8" />
-        <!-- Tell browsers not to scale the viewport automatically -->
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Rock Paper Scioosrs Minus One</title>
-        <link rel="icon" href="favicon.ico" />
+    <meta charset="UTF-8" />
+    <!-- Tell browsers not to scale the viewport automatically -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rock Paper Scissors Minus One</title>
+    <link rel="icon" href="favicon.ico" />
+    <!-- CSS 파일 링크 -->
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="how.css" />
     </head>
     <body>
-        <!-- Use header, main, and footer elements to give semantic structure -->
         <header>
-        
-            <h1>Rock Paper Scissors Minus One<sup>&reg;</sup></h1>
-            
+            <div class="logo">
+                <img src="\sources\logo.png" alt="Logo" width="100%" />    
+            </div>
+      
+            <!-- 태그라인 -->
             <h2>"Sir, would you like to play a game with me?"</h2>
-
-            <!-- Navigation elements -->
+            <br>
+            <!-- 네비게이션 바 -->
             <nav>
-            <!-- Menu is a semantic alternative to <ul> that represents an interaction -->
                 <menu>
                     <li><a href="index.html">Home</a></li>
-                    <li><a href="how.html">How to Play</a></li>
+                    <li><a class="active" href="how.html">How to Play</a></li>
                     <li><a href="play.html">Play</a></li>
                     <li><a href="halloffame.html">Hall of Fame</a></li>
                     <li><a href="about.html">About</a></li>
                 </menu>
             </nav>
-
-            <!-- Since we don't have the ability to style we use old style HTML to give some visual formatting -->
-            <hr />
+            <br>
         </header>
 
         <main>
@@ -42,17 +43,18 @@
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
                 allowfullscreen>
             </iframe>
-        
+            <br>
+            <br>
       
             <p>In this game, you will take turns playing Rock-Paper-Scissors against game agents.</p>
             <p>I trust you know the rules, however, we will add some additional rules.</p>
 
             <h2>Additional Rules</h2>
-            <ul>
-                <li>You must select one of rock, papaer and scissors for your left hand and another for your right hand within the given time limit.</li>
+            <ul class="additional-rules">
+                <li>You <span class="highlight">must</span> select one of rock, papaer and scissors for your left hand and another for your right hand <span class="highlight">within the given time limit.</span></li>
                 <li>Your opponent will also select two options simultaneously, one for their left hand and one for their right hand.</li>
                 <li>Once both players make their selections, the choices will be revealed to each other at the same time.</li>
-                <li>Each player must then decide which one of their two hands (left or right) they want to use for the final showdown. Make your final decision within the time limit.</li>
+                <li>Each player <span class="highlight">must</span> then decide which one of their two hands (left or right) they want to use for the final showdown. <span class="highlight">Make your final decision within the time limit.</span></li>
                 <li>The winner is determined based on the final choices of both players.</li>
                 <li>If you win, you will proceed to play against the next agent in the sequence.</li>
             </ul>
@@ -60,21 +62,21 @@
             <h2>Tips for Winning</h2>
             <ul>
                 <li>Think about your opponent’s potential choices and counter them strategically.</li>
-                <li>As the game progresses, the agents will become smarter, and the time limit will become shorter. Stay focused!</li>
+                <li>As the game progresses, the agents will become <span class="highlight">smarter</span>, and the time limit will become <span class="highlight">shorter</span>. Stay focused!</li>
             </ul>
 
             <h2>Hall of Fame</h2>
             <p>The number of times you complete all rounds will be recorded in the Hall of Fame.</p>
+            <br>
+            <br>
 
             <form method="get" action="play.html">
-                <button type="submit">Play now</button>
+                <button type="submit">Are you ready? Play now!</button>
             </form>
         </main>
 
         <footer>
-            <hr />
             <span class="text-reset">Author Name: Minjoong Kim</span>
-            <br />
             <a href="https://github.com/kimpublic/startup">GitHub</a>
         </footer>
     </body>

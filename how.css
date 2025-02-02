@@ -1,0 +1,38 @@
+/* how.css - how.html 전용 추가 스타일 */
+
+main {
+    justify-content: flex-start;
+    padding: 50px 1em;
+}
+
+/* 1. 메인 영역의 섹션 제목(h2)을 #FF007A 색상과 밑줄로 지정 */
+main h2 {
+    color: #FF007A;
+    border-bottom: 2px solid #FF007A;
+    padding-bottom: 0.3em;
+    margin-bottom: 1em;
+    margin-top: 2em;
+}
+  
+  /* 2. "Additional Rules" 목록에만 해당하는 bullet 색상을 #FF007A로 지정 
+     (how.html의 해당 목록에는 <ul class="additional-rules"> 를 사용) */
+ul.additional-rules li::marker {
+    color: #FF007A;
+}
+
+main p {
+    margin-bottom: 0.75em;
+}
+
+main li {
+    margin-bottom: 0.75em;
+}
+
+main form {
+    max-width: 450px;
+}
+
+main form button {
+    font-size: 30px;
+}
+  
