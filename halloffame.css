@@ -1,0 +1,54 @@
+/* halloffame.css - Hall of Fame 페이지 전용 추가 스타일 */
+
+main {
+    justify-content: flex-start;
+    padding: 50px 1em;
+}
+
+.table-container {
+    display: flex;
+    flex-wrap: wrap;       
+    justify-content: center;
+    gap: 50px;             
+}
+  
+.table-container table {
+    width: 400px !important;
+    margin: 20px 0;
+    font-size: 1.1rem;
+}
+
+.table-container table caption {
+    color: #FF007A;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.table-container table th,
+.table-container table td {
+    padding: 8px;
+}
+  
+.table-container table tbody tr:nth-child(1) {
+    color: #FFD700;
+}
+
+.table-container table tbody tr:nth-child(2) {
+    color: #C0C0C0;
+}
+
+.table-container table tbody tr:nth-child(3) {
+    color: #CD7F32;
+}
+  
+.table-container table tbody tr:nth-child(1) td:nth-child(2)::before {
+    content: "👑 ";
+}
+.table-container table tbody tr:nth-child(1) td:nth-child(2)::after {
+    content: " 👑";
+}
+
+main form button {
+    font-size: 20px;
+}
+  

@@ -1,0 +1,19 @@
+/* about.css - about.html 전용 추가 스타일 */
+
+main {
+    justify-content: flex-start;
+    padding: 50px 1em;
+}
+
+/* 1. 게임 소개 텍스트를 그룹화한 컨테이너 */
+.text-container {
+    max-width: 855px;
+    margin: 1em auto;
+    padding: 0 1em;
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+  
+  main form button {
+    font-size: 20px;
+}
