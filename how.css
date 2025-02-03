@@ -16,7 +16,7 @@ main h2 {
   
   /* 2. "Additional Rules" 목록에만 해당하는 bullet 색상을 #FF007A로 지정 
      (how.html의 해당 목록에는 <ul class="additional-rules"> 를 사용) */
-ul.additional-rules li::marker {
+ul.list li::marker {
     color: #FF007A;
 }
 
@@ -35,4 +35,7 @@ main form {
 main form button {
     font-size: 30px;
 }
+
+
+
   

@@ -1,0 +1,235 @@
+/* play.css - Play 페이지 전용 추가 스타일 */
+
+/* main 기본 패딩 */
+main {
+    justify-content: flex-start;
+    padding: 15px 1em;
+}
+  
+  /* 1. 게임 상태 전광판 */
+.status-board {
+    width: 100%;
+    max-width: 600px; /* 최대 600px까지 */
+    margin: 20px auto;
+    margin-bottom: 5px;
+    text-align: center;
+    background-color: black;
+    color: limegreen;
+    padding: 10px 0;
+    border: 6px solid limegreen;
+    border-radius: 5px;
+}
+  
+.status-board .status-small {
+    font-size: 14px;           
+    font-family: Arial, sans-serif;  
+    margin-bottom: 5px;
+}
+
+.status-board .status-large {
+    font-size: 32px;           
+    font-family: 'Impact', sans-serif;  
+    margin-bottom: 10px;
+}
+
+.status-board .status-medium {
+  font-size: 20px;           
+  font-family: 'Impact', sans-serif;  
+  margin-bottom: 10px;
+}
+
+
+/* 2. 에이전트 화면 테이블 */
+.agent-table {
+    width: 70%;
+    max-width: 250px;
+    margin: 10px auto;
+    border-collapse: collapse;
+}
+  
+.agent-table .agent-image-cell {
+    text-align: center;
+    padding: 10px;
+}
+  
+.agent-table td {
+    padding: 10px;
+    text-align: center;
+}
+  
+.agent-choice {
+    width: 80px;
+    height: 80px;
+    border: none;
+    border-radius: 5px;
+    padding: 5px;
+    background-color: #222;
+}
+
+/* 이건 임시로 해둔겁니다! */
+.right-choice {
+    border: 3px solid green;
+}
+  
+  
+/* 타이머 영역 전체 */
+.timer-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* 타이머 바 (컨테이너) */
+.timer-bar {
+  width: 100%;
+  max-width: 500px;
+  height: 20px;
+  background-color: lightgray;
+  border-radius: 5px;
+  overflow: hidden;
+  border: 2px solid #fff;
+}
+
+/* 타이머 진행 바 */
+.timer-progress {
+  width: 100%;
+  height: 100%;
+  background-color: #FF007A;
+  transition: width 5s linear; /* 필요에 따라 시간 조정 */
+}
+
+
+
+
+
+
+  
+
+/* 4. 플레이어 게임판 */
+.player-board-container {
+    width: 100%;
+    max-width: 600px;
+    margin: 20px auto;
+    text-align: left;
+}
+  
+.player-board-title {
+    font-size: 18px;
+    margin-bottom: 10px;
+    font-family: Arial, sans-serif;
+}
+  
+.player-board {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+}
+  
+.player-board th, .player-board td {
+    padding: 10px;
+    border: 1px solid #ddd;
+}
+  
+.player-choice {
+    width: 80px;
+    height: 80px;
+    border: 2px solid transparent;
+    border-radius: 5px;
+    padding: 5px;
+    background-color: #222;
+    transition: border 0.3s ease;
+}
+  
+.player-choice:hover {
+    border: 2px solid yellow;
+}
+  
+  
+/* 5. Retry 버튼 */
+.retry-area button {
+    padding: 0.7em 1em;
+    border: none;
+    border-radius: 4px;
+    background-color: #FF007A;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+  
+.retry-area button:hover {
+    background-color: #e6006e;
+}
+  
+  
+/* 6. 초대장 및 명예의 전당 버튼 */
+.extra-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin: 20px auto;
+    width: 100%;
+    max-width: 600px;
+}
+  
+.extra-buttons form button {
+    padding: 0.7em 1em;
+    border: none;
+    border-radius: 4px;
+    background-color: #FF007A;
+    color: #fff;
+    cursor: pointer;
+    flex: 1;
+    transition: background-color 0.3s ease;
+}
+  
+.extra-buttons form button:hover {
+    background-color: #e6006e;
+}
+  
+  
+/* 7. 에이전트 flex 컨테이너 (옵션 부분) */
+.agent-flex-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    margin: 20px auto;
+    width: 100%;
+    max-width: 600px;
+    flex-wrap: nowrap;
+}
+  
+.agent-hand {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    align-self: flex-end;
+}
+  
+.agent-image-container {
+    text-align: center;
+}
+  
+/* 미디어 쿼리: 화면 폭이 800px 이하이면 wrap 처리 */
+@media (max-width: 800px) {
+  .agent-flex-container {
+    flex-wrap: wrap;
+  }
+  
+  .agent-image-container {
+    flex: 1 1 100%;
+    text-align: center;
+  }
+  
+  .agent-hand {
+    flex: 1 1 45%;
+  }  
+}
+  
+
+
+  

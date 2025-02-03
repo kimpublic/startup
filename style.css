@@ -35,7 +35,7 @@
   
   /* 2-1. 로고 */
   header .logo {
-    width: 290px;
+    width: 250px;
     background-color: transparent;
     margin-bottom: 0.3em;
   }
@@ -126,7 +126,7 @@
     color: #888;
   }
   
-  main form button {
+  main form button, main div button {
     padding: 0.7em 1em;
     border: none;
     border-radius: 4px;
@@ -154,14 +154,14 @@
     font-size: 0.8rem;
   }
 
- footer a:visited {
+  footer a:visited {
     color: #FF007A;
- }
+  }
   
 
   
   /* 5. 반응형 처리: 화면 높이가 750px 이하일 경우 header와 footer 숨김 */
-@media (max-height: 750px) {
+  @media (max-height: 750px) {
     header,
     footer {
       display: none;
@@ -169,19 +169,19 @@
     main {
       flex: 1 100vh;
     }
-}
+  }
   
 
-.highlight {
+  .highlight {
     color: #FF007A;
-}
+  }
 
 
-.text-container {
+  .text-container {
     max-width: 855px;
     margin: 1em auto;
     padding: 0 1em;
     font-size: 1rem;
     line-height: 1.6;
-}
+  }
   

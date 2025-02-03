@@ -1,18 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-    <meta charset="UTF-8" />
-    <!-- Tell browsers not to scale the viewport automatically -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Rock Paper Scissors Minus One</title>
-    <link rel="icon" href="favicon.ico" />
-    <!-- CSS 파일 링크 -->
-    <link rel="stylesheet" href="style.css" />
+        <meta charset="UTF-8" />
+        <!-- Tell browsers not to scale the viewport automatically -->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Rock Paper Scissors Minus One</title>
+        <link rel="icon" href="favicon.ico" />
+        <!-- CSS 파일 링크 -->
+        <link rel="stylesheet" href="style.css" />
+        <link rel="stylesheet" href="play.css" />
     </head>
     <body>
         <header>
             <div class="logo">
-                <img src="\sources\logo.png" alt="Logo" width="100%" />    
+                <img src="\sources\sources/sauce/title.png" alt="Logo" width="100%" />    
             </div>
       
             <!-- 태그라인 -->
@@ -32,176 +33,129 @@
         </header>
 
         <main>
-            <!-- Player information -->
-            <div class="player-info">
-                Player: <span class="player-email">[Player's Email]</span>
-            </div>
-            <hr />
+          <!-- 1. 플레이어 정보 -->
+          <div class="player-info">
+            Player: <span class="player-email">[Player's Email]</span>
+          </div>
+          <hr />
+      
+          <!-- 2. 게임 상태 전광판 (4줄 구성) -->
+          <div class="status-board">
+            <div class="status-small">Game Status</div>
+            <div class="status-large" style="color: white;">You win! Move onto the next round!</div>
+            <div class="status-small">Stage</div>
+            <div class="status-medium" style="color: white;">Game Agent O</div>
+          </div>
 
-            <!-- Game Status Display -->
-            <div class="game-status-board" style="
-                width: 600px; 
-                background-color: black; 
-                color: limegreen; 
-                text-align: center; 
-                font-size: 24px; 
-                font-weight: bold; 
-                padding: 10px 0; 
-                margin-bottom: 20px; 
-                border: 6px solid limegreen; 
-                border-radius: 5px;">
-                <span id="status-message">You win! Move onto the next round!</span>
-            </div>
-
-            <!-- Round display -->
-            <div class="round-info">
-                <h2>Round <span class="round-number">1</span></h2>
-            </div>
-
-            <!-- Game Agent display -->
-            <div class="game-agent">
-                <h3>Game Agent O</h3>
-                <div class="agent-box">
-
-                    <!-- Placeholder for Agent's image -->
-                    <img src="/sources/gameagentO.png" alt="Game Agent" height="150" />
-
-                    <span class="agent-choices">
-                        <table>
-                            <tr>
-                                <th>Left Hand</th>
-                                <th>Right Hand</th>
-                            </tr>
-                            <tr>
-                                <td class="agent-left">
-                                    <button class="choice rock" style="
-                                        width: 80px; 
-                                        height: 80px; 
-                                        padding: 10px; 
-                                        border: 5px solid green; 
-                                        border-radius: 5px;">
-                                        [Agent's Left Option]✊
-                                    </button>
-                                </td>
-                                <td class="agent-right">
-                                    <button class="choice paper" style="
-                                        width: 80px; 
-                                        height: 80px; 
-                                        padding: 10px; 
-                                        border: 2px solid lightgray; 
-                                        border-radius: 5px;">
-                                        [Agent's Right Option]✌️
-                                    </button>
-                                </td>
-                            </tr>
-                        </table>
-                    </span>
-                </div>
-            </div>
-
-            <!-- Timer -->
-            <div class="timer" style="display: inline-flex; align-items: center; gap: 10px;">
-                <!-- Clock Icon -->
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-clock" viewBox="0 0 16 16">
-                    <path d="M8 3.5a.5.5 0 0 1 .5.5v4h3a.5.5 0 0 1 0 1H8a.5.5 0 0 1-.5-.5V4a.5.5 0 0 1 .5-.5z" />
-                    <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm0-1A7 7 0 1 1 8 1a7 7 0 0 1 0 14z" />
-                </svg>
+      
+          <!-- 3. 게임 에이전트 화면 (테이블 형태, 2행) -->
+          <table class="agent-table">
+            <tr>
+              <td colspan="2" class="agent-image-cell">
+                <!-- 에이전트 사진 (예시) -->
+                <img src="/sources/sources/sauce/prt_1.png" alt="Game Agent" height="220" />
+              </td>
+            </tr>
+            <tr>
+              <td class="agent-left-cell">
+                <button class="agent-choice left-choice">
+                  <!-- 왼손 옵션 (예시 이미지) -->
+                  <img src="/sources/sources/sauce/man_l_r_2.png" alt="Left Option" height="70" />
+                </button>
+              </td>
+              <td class="agent-right-cell">
+                <button class="agent-choice right-choice">
+                  <!-- 오른손 옵션 (예시 이미지) -->
+                  <img src="/sources/sources/sauce/man_r_p_2.png" alt="Right Option" height="70" />
+                </button>
+              </td>
+            </tr>
+          </table>
   
-                <!-- Timer Bar -->
-                <div class="timer-bar" style="width: 300px; height: 20px; background-color: lightgray; border-radius: 5px; overflow: hidden;">
-                    <div class="progress" style="width: 100%; height: 100%; background-color: green; transition: width 5s linear;"></div>
-                </div>
-            </div>
-
-            <!-- Game Area -->
-            <div class="game-area">
-                <h2>You:</h2>
-                <div class="game-pad" style="
-                    display: flex; 
-                    justify-content: space-around; 
-                    align-items: center; 
-                    gap: 20px; 
-                    width: 600px; 
-                    height: 300px; 
-                    margin: 0 auto; 
-                    padding: 20px; 
-                    border: 2px solid lightgray; 
-                    border-radius: 10px; 
-                    box-sizing: border-box;">
-
-                    <!-- Left Hand Options -->
-                    <div class="left-options" style="display: flex; flex-direction: column; gap: 10px;">
-                        <button class="choice rock" style="
-                            width: 80px; 
-                            height: 80px; 
-                            padding: 10px; 
-                            border: 5px solid yellow;
-                            border-radius: 5px;">
-                            ✊
-                        </button>
-                        <button class="choice paper" style="
-                            width: 80px; 
-                            height: 80px; 
-                            padding: 10px; 
-                            border: 2px solid lightgray; 
-                            border-radius: 5px;">
-                            ✋
-                        </button>
-                        <button class="choice scissors" style="
-                            width: 80px; 
-                            height: 80px; 
-                            padding: 10px; 
-                            border: 2px solid lightgray; 
-                            border-radius: 5px;">
-                            ✌️
-                        </button>
-                    </div>
   
-                    <!-- Right Hand Options -->
-                    <div class="right-options" style="display: flex; flex-direction: column; gap: 10px;">
-                        <button class="choice rock highlight-green" style="
-                            width: 80px; 
-                            height: 80px; 
-                            padding: 10px; 
-                            border: 2px solid lightgray; 
-                            border-radius: 5px;">
-                            ✊
-                        </button>
-                        <button class="choice paper highlight-yellow" style="
-                            width: 80px; 
-                            height: 80px; 
-                            padding: 10px; 
-                            border: 5px solid green;
-                            border-radius: 5px;">
-                            ✋
-                        </button>
-                        <button class="choice scissors" style="
-                            width: 80px; 
-                            height: 80px; 
-                            padding: 10px; 
-                            border: 2px solid lightgray; 
-                            border-radius: 5px;">
-                            ✌️
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Retry Button -->
-            <div class="retry-area">
-                <button class="retry-button" onclick="location.reload()">Retry</button>
-            </div>
-
-            <!-- invite Friends Button-->
+  
+  
+  
+      
+          <!-- 4. 타이머 영역 -->
+          <div class="timer-container">
+            <!-- Clock Icon -->
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="clock-icon" viewBox="0 0 16 16">
+                <path d="M8 3.5a.5.5 0 0 1 .5.5v4h3a.5.5 0 0 1 0 1H8a.5.5 0 0 1-.5-.5V4a.5.5 0 0 1 .5-.5z" />
+                <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm0-1A7 7 0 1 1 8 1a7 7 0 0 1 0 14z" />
+            </svg>
+              <div class="timer-bar">
+                <div class="timer-progress"></div>
+              </div>
+          </div>
+      
+          <!-- 5. 플레이어(You) 게임판 -->
+          <div class="player-board-container">
+            <div class="player-board-title">Player (You):</div>
+            <table class="player-board">
+              <thead>
+                <tr>
+                  <th>Left Hand</th>
+                  <th>Right Hand</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <button class="player-choice">
+                      <img src="/sources/sources/sauce/m_l_r_2.png" alt="Rock" height="50" />
+                    </button>
+                  </td>
+                  <td>
+                    <button class="player-choice">
+                      <img src="/sources/sources/sauce/m_r_r_2.png" alt="Rock" height="50" />
+                    </button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <button class="player-choice">
+                      <img src="/sources/sources/sauce/m_l_p_2.png" alt="Paper" height="50" />
+                    </button>
+                  </td>
+                  <td>
+                    <button class="player-choice">
+                      <img src="/sources/sources/sauce/m_r_p_2.png" alt="Paper" height="50" />
+                    </button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <button class="player-choice">
+                      <img src="/sources/sources/sauce/m_l_s_2.png" alt="Scissors" height="50" />
+                    </button>
+                  </td>
+                  <td>
+                    <button class="player-choice">
+                      <img src="/sources/sources/sauce/m_r_s_2.png" alt="Scissors" height="50" />
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+      
+          <!-- 6. Retry 버튼 -->
+          <div class="retry-area">
+            <button class="retry-button" onclick="location.reload()">Retry</button>
+          </div>
+      
+          <!-- 7. 초대장, 명예의 전당 버튼 -->
+          <div class="extra-buttons">
             <form method="get" action="invite.html">
-                <button type="submit">Send an invitation to friends as a winner</button>
+              <button type="submit">Send an invitation to friends as a winner</button>
             </form>
-
-            <!-- Hall of Fame Button-->
+              
             <form method="get" action="halloffame.html">
-                <button type="submit">Check your name on the Hall of Fame</button>
+              <button type="submit">Check your name on the Hall of Fame</button>
             </form>
-
+          </div>
+          <br>
         </main>
 
         <footer>
