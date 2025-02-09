@@ -11,20 +11,21 @@
     padding: 0;
   }
   
-  body {
+  .body {
     background-color: #000;             /* 전체 배경: 검정 */
     color: #fff;                        /* 기본 글자색: 흰색 */
     font-family: Arial, sans-serif;
     display: flex;
     flex-direction: column;
     min-width: 375px;
+    min-height: 100vh;
   }
   
   /* 2. 헤더 영역 */
   header {
     background-color: #000;             /* 헤더 배경: 검정 */
     width: 100%;
-    height: 300px;                      /* 고정 높이 */
+    height: 275px;                      /* 고정 높이 */
     border-bottom: 3px solid #FF007A;     /* 헤더와 본문 사이 굵은 분리선 */
     display: flex;
     flex-direction: column;
@@ -35,7 +36,7 @@
   
   /* 2-1. 로고 */
   header .logo {
-    width: 250px;
+    width: 200px;
     background-color: transparent;
     margin-bottom: 0.3em;
   }
@@ -87,6 +88,7 @@
     align-items: center;
     justify-content: flex-start;
     padding: 80px 1em;
+
   }
   
   main h1 {
@@ -146,6 +148,7 @@
     width: 100%;
     height: 45px;
     flex: 0 0 45px;
+    flex-shrink: 0;  /* footer가 위로 밀려 올라가지 않도록 설정 */
     border-top: 3px solid #FF007A;     /* 본문과 구분하는 굵은 분리선 */
     display: flex;
     align-items: center;
