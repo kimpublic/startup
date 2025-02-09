@@ -67,16 +67,21 @@
     margin: 0 1em;
   }
   
-  menu li a {
+  menu li .nav-link {
     text-decoration: none;
     color: #fff;
     transition: color 0.3s ease;
   }
   
   /* hover 및 현재 페이지 상태 표시 */
-  menu li a:hover,
-  menu li a.active {
+  menu li .nav-link:hover {
     color: #FF007A;
+  }
+
+  menu li .nav-link.active {
+    color: #FF007A !important;
+    font-weight: bold;
+    border-bottom: 2px solid #FF007A;
   }
   
   /* 3. 메인 영역 (본문) */
