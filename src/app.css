@@ -133,7 +133,7 @@
     color: #888;
   }
   
-  main form button, main div button {
+  button, main form button, main div button {
     padding: 0.7em 1em;
     border: none;
     border-radius: 4px;
@@ -142,9 +142,19 @@
     cursor: pointer;
     transition: background-color 0.3s ease;
   }
+
+
+  .text-container {
+    max-width: 855px;
+    margin: 2em auto;
+    padding: 0 1em;
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
   
-  main form button:hover {
-    background-color: #e6006e;  /* 약간 어두운 FF007A 계열 */
+  button, main form button:hover {
+    background-color: #e6006e; 
   }
   
   /* 4. footer 영역 */
@@ -153,8 +163,8 @@
     width: 100%;
     height: 45px;
     flex: 0 0 45px;
-    flex-shrink: 0;  /* footer가 위로 밀려 올라가지 않도록 설정 */
-    border-top: 3px solid #FF007A;     /* 본문과 구분하는 굵은 분리선 */
+    flex-shrink: 0;  
+    border-top: 3px solid #FF007A;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -185,11 +195,5 @@
   }
 
 
-  .text-container {
-    max-width: 855px;
-    margin: 1em auto;
-    padding: 0 1em;
-    font-size: 1rem;
-    line-height: 1.6;
-  }
+
   

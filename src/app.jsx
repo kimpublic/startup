@@ -24,7 +24,6 @@ export default function App() {
             
                     
                     <h2>"Sir, would you like to play a game with me?"</h2>
-                    <br />
                     
                     <nav>
                         <menu className='navbar-nav'>

@@ -1,11 +1,9 @@
-/* about.css - about.html 전용 추가 스타일 */
+/* about.css - About 페이지 전용 추가 스타일 */
 
+/* 메인 영역의 패딩 조정 */
 main {
     justify-content: flex-start;
     padding: 50px 1em;
 }
 
-  
-main form button {
-    font-size: 20px;
-}
+/* 버튼 스타일은 app.css에서 정의되므로 삭제 가능 */

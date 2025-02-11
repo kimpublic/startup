@@ -1,34 +1,39 @@
-/* halloffame.css - Hall of Fame 페이지 전용 추가 스타일 */
-
-main {
-    justify-content: flex-start;
-    padding: 50px 1em;
-}
 
 .table-container {
     display: flex;
-    flex-wrap: wrap;       
+    flex-wrap: wrap;
     justify-content: center;
-    gap: 50px;             
+    gap: 50px;
 }
-  
+
+
 .table-container table {
-    width: 400px !important;
+    width: 400px;
     margin: 20px 0;
     font-size: 1.1rem;
+    border-collapse: collapse;
+    text-align: center;
+    border: 1px solid white;
 }
+
 
 .table-container table caption {
     color: #FF007A;
     font-weight: bold;
+    font-size: 25px;
     margin-bottom: 10px;
+    caption-side: top; 
+    text-align: center;
 }
+
 
 .table-container table th,
 .table-container table td {
     padding: 8px;
+    border: 1px solid white;
 }
-  
+
+
 .table-container table tbody tr:nth-child(1) {
     color: #FFD700;
 }
@@ -40,7 +45,8 @@ main {
 .table-container table tbody tr:nth-child(3) {
     color: #CD7F32;
 }
-  
+
+
 .table-container table tbody tr:nth-child(1) td:nth-child(2)::before {
     content: "👑 ";
 }
@@ -48,7 +54,31 @@ main {
     content: " 👑";
 }
 
-main form button {
-    font-size: 20px;
+.table-container table tbody tr:nth-child(2) td:nth-child(2)::before {
+    content: "🥈 ";
 }
-  
+.table-container table tbody tr:nth-child(2) td:nth-child(2)::after {
+    content: " 🥈";
+}
+
+.table-container table tbody tr:nth-child(3) td:nth-child(2)::before {
+    content: "🥉 ";
+}
+.table-container table tbody tr:nth-child(3) td:nth-child(2)::after {
+    content: " 🥉";
+}
+
+.halloffame-btn {
+    font-size: 20px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #FF007A;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.halloffame-btn:hover {
+    background-color: #e6006e;
+}
