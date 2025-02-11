@@ -33,7 +33,7 @@ export function About() {
 
       
       <img 
-        src="/sources/aboutgif.gif" 
+        src="aboutgif.gif" 
         alt="화이팅!" 
         style={{ width: "70%", maxWidth: "700px" }} 
       />

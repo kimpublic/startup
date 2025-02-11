@@ -19,7 +19,7 @@ export default function App() {
                 <header>
                     <br />
                     <div className="logo">
-                        <img src="\sources\sources/sauce/title.png" alt="Logo" width="100%" />     
+                        <img src="title.png" alt="Logo" width="100%" />     
                     </div>
             
                     

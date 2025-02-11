@@ -27,18 +27,18 @@ export function Play() {
         <tbody>
           <tr>
             <td colSpan="2" className="agent-image-cell">
-              <img src="/sources/sources/sauce/prt_1.png" alt="Game Agent" height="220" />
+              <img src="prt_1.png" alt="Game Agent" height="220" />
             </td>
           </tr>
           <tr>
             <td className="agent-left-cell">
               <button className="agent-choice left-choice">
-                <img src="/sources/sources/sauce/man_l_r_2.png" alt="Left Option" height="70" />
+                <img src="man_l_r_2.png" alt="Left Option" height="70" />
               </button>
             </td>
             <td className="agent-right-cell">
               <button className="agent-choice right-choice">
-                <img src="/sources/sources/sauce/man_r_p_2.png" alt="Right Option" height="70" />
+                <img src="man_r_p_2.png" alt="Right Option" height="70" />
               </button>
             </td>
           </tr>
@@ -70,36 +70,36 @@ export function Play() {
             <tr>
               <td>
                 <button className="player-choice">
-                  <img src="/sources/sources/sauce/m_l_r_2.png" alt="Rock" height="50" />
+                  <img src="m_l_r_2.png" alt="Rock" height="50" />
                 </button>
               </td>
               <td>
                 <button className="player-choice">
-                  <img src="/sources/sources/sauce/m_r_r_2.png" alt="Rock" height="50" />
-                </button>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <button className="player-choice">
-                  <img src="/sources/sources/sauce/m_l_p_2.png" alt="Paper" height="50" />
-                </button>
-              </td>
-              <td>
-                <button className="player-choice">
-                  <img src="/sources/sources/sauce/m_r_p_2.png" alt="Paper" height="50" />
+                  <img src="m_r_r_2.png" alt="Rock" height="50" />
                 </button>
               </td>
             </tr>
             <tr>
               <td>
                 <button className="player-choice">
-                  <img src="/sources/sources/sauce/m_l_s_2.png" alt="Scissors" height="50" />
+                  <img src="m_l_p_2.png" alt="Paper" height="50" />
                 </button>
               </td>
               <td>
                 <button className="player-choice">
-                  <img src="/sources/sources/sauce/m_r_s_2.png" alt="Scissors" height="50" />
+                  <img src="m_r_p_2.png" alt="Paper" height="50" />
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <button className="player-choice">
+                  <img src="m_l_s_2.png" alt="Scissors" height="50" />
+                </button>
+              </td>
+              <td>
+                <button className="player-choice">
+                  <img src="m_r_s_2.png" alt="Scissors" height="50" />
                 </button>
               </td>
             </tr>
