@@ -91,7 +91,7 @@ For this deliverable, I did the following. I checked the box `[x]` and added a d
 
 ## 🚀 HTML deliverable
 
-For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
+For this deliverable, I did the following. I checked the box `[x]` and added a description for things I completed.
 
 | **index.html**                       | **how.html**                        | **play.html**                       |
 |--------------------------------------|-------------------------------------|-------------------------------------|
@@ -114,7 +114,7 @@ For this deliverable I did the following. I checked the box `[x]` and added a de
 
 ## 🚀 CSS deliverable
 
-For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
+For this deliverable, I did the following. I checked the box `[x]` and added a description for things I completed.
 
 - [x] **Header, footer, and main content body** - used CSS for header, footer, and main content body.
 - [x] **Navigation elements** - used CSS for navigation elements.
@@ -125,22 +125,22 @@ For this deliverable I did the following. I checked the box `[x]` and added a de
 
 ## 🚀 React part 1: Routing deliverable
 
-For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
+For this deliverable, I did the following. I checked the box `[x]` and added a description for things I completed.
 
-- [ ] **Bundled using Vite** - I did not complete this part of the deliverable.
-- [ ] **Components** - I did not complete this part of the deliverable.
-- [ ] **Router** - Routing between login and voting components.
+- [x] **Bundled using Vite** - Completed.
+- [x] **Components** - Completed.
+- [x] **Router** - Completed.
 
 ## 🚀 React part 2: Reactivity
 
-For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
+For this deliverable, I did the following. I checked the box `[x]` and added a description for things I completed.
 
 - [ ] **All functionality implemented or mocked out** - I did not complete this part of the deliverable.
 - [ ] **Hooks** - I did not complete this part of the deliverable.
 
 ## 🚀 Service deliverable
 
-For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
+For this deliverable, I did the following. I checked the box `[x]` and added a description for things I completed.
     
 - [ ] **Node.js/Express HTTP service** - I did not complete this part of the deliverable.
 - [ ] **Static middleware for frontend** - I did not complete this part of the deliverable.
@@ -152,14 +152,14 @@ For this deliverable I did the following. I checked the box `[x]` and added a de
 
 ## 🚀 DB/Login deliverable
 
-For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
+For this deliverable, I did the following. I checked the box `[x]` and added a description for things I completed.
 
 - [ ] **Stores data in MongoDB** - I did not complete this part of the deliverable.
 - [ ] **Stores credentials in MongoDB** - I did not complete this part of the deliverable.
 
 ## 🚀 WebSocket deliverable
 
-For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
+For this deliverable, I did the following. I checked the box `[x]` and added a description for things I completed.
 
 - [ ] **Backend listens for WebSocket connection** - I did not complete this part of the deliverable.
 - [ ] **Frontend makes WebSocket connection** - I did not complete this part of the deliverable.
