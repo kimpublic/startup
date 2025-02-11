@@ -131,6 +131,10 @@ For this deliverable, I did the following. I checked the box `[x]` and added a d
 - [x] **Components** - Completed.
 - [x] **Router** - Completed.
 
++ Updated favicon!
++ Modified responsive resizing feature as the laptop-size monitors did not show the header and footer.
++ Modified the size of the logo as it was too big.
+
 ## 🚀 React part 2: Reactivity
 
 For this deliverable, I did the following. I checked the box `[x]` and added a description for things I completed.
