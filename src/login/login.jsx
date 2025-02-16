@@ -59,7 +59,7 @@ export function Login({ authState, userEmail, nickName, onLogin, onLogout }) {
 
         {/* 닉네임 글자수 제한 기능과 비속어 검사해야함함 */}
         <div className="input-row" style={{ maxWidth: '500px' }}>
-          <span>👤</span>
+          <span>🧑‍💼</span>
           <input
             type="text"
             value={tempNick}
