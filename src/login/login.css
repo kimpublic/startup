@@ -38,7 +38,7 @@
   
   .input-row span {
     margin-right: 0.5em;
-    color: #fff; /* 아이콘/이모지 컬러 */
+    margin-left: 0.5em; /* 아이콘/이모지와 입력창 사이 간격 */
   }
   
   .input-row input {
