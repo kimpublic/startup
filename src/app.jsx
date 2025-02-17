@@ -6,7 +6,7 @@ import { Bell, BellOff } from 'lucide-react';
 import { BrowserRouter, NavLink, Route, Routes } from 'react-router-dom';
 import { Login } from './login/login';
 import { Play } from './play/play';
-import { Halloffame } from './halloffame/halloffame';
+import { Halloffame } from './halloffame/halloffame_2';
 import { About } from './about/about';
 import { How } from './how/how';
 import { Invite } from './invite/invite';
@@ -37,11 +37,11 @@ export default function App() {
     }
   }, [musicOn, volume]);
 
-  function handleLogin(email, nick) {
+  function handleLogin(email, nickName) {
     localStorage.setItem('userEmail', email);
-    localStorage.setItem('nickName', nick);
+    localStorage.setItem('nickName', nickName);
     setUserEmail(email);
-    setNickName(nick);
+    setNickName(nickName);
     setAuthState(AuthState.Authenticated);
   }
 
