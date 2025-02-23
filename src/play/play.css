@@ -66,10 +66,7 @@ main {
     background-color: #222;
 }
 
-/* 이건 임시로 해둔겁니다! */
-.right-choice {
-    border: 3px solid green;
-}
+
   
   
 /* 타이머 영역 전체 */
@@ -99,7 +96,7 @@ main {
   width: 100%;
   height: 100%;
   background-color: #FF007A;
-  transition: width 5s linear; /* 필요에 따라 시간 조정 */
+  transition: width var(--timer-duration) linear; /* 필요에 따라 시간 조정 */
 }
 
 

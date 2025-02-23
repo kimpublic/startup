@@ -5,7 +5,7 @@ import { Bell, BellOff } from 'lucide-react';
 
 import { BrowserRouter, NavLink, Route, Routes } from 'react-router-dom';
 import { Login } from './login/login';
-import { Play } from './play/play';
+import { Play } from './play/play_2';
 import { Halloffame } from './halloffame/halloffame_2';
 import { About } from './about/about';
 import { How } from './how/how';
