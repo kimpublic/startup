@@ -4,10 +4,10 @@ import '../app.css';
 import './play.css';
 
 const STAGE_INFO = [
-  { agentName: 'Agent O', sameProbability: 0.3, timeLimit: 5 },
-  { agentName: 'Agent 세모', sameProbability: 0.1, timeLimit: 4 },
-  { agentName: 'Agent 네모', sameProbability: 0.0, timeLimit: 3 },
-  { agentName: 'Agent 프론트맨', sameProbability: 0.0, timeLimit: 2 },
+  { agentName: 'Agent Donggeurami', sameProbability: 1.0, timeLimit: 5 }, // 0.3
+  { agentName: 'Agent Semo', sameProbability: 1.0, timeLimit: 4 }, // 0.1
+  { agentName: 'Agent Nemo', sameProbability: 1.0, timeLimit: 3 },
+  { agentName: 'Agent Frontman', sameProbability: 1.0, timeLimit: 2 },
 ];
 
 const DIFFERENT_OPTIONS = [
@@ -45,6 +45,9 @@ export function Play() {
   // 전광판 메시지
   const [statusMessage, setStatusMessage] = useState('...');
 
+  // 승리 페이지 관리
+  const [gameOver, setGameOver] = useState(false);
+
   // 에이전트
   const [agentLeft, setAgentLeft] = useState(null);
   const [agentRight, setAgentRight] = useState(null);
@@ -59,8 +62,14 @@ export function Play() {
   const [userFinalHand, setUserFinalHand] = useState(null);
 
   // 사운드
-  const hoverSound = useRef(new Audio('/hoverSound.mp3'));
+  // const hoverSound = useRef(new Audio('/hoverSound.mp3'));
   const clickSound = useRef(new Audio('/clickSound.mp3'));
+
+  // 효과음 추가 🔥
+  const tickSound = useRef(new Audio('/tick.mp3'));  // 1초 감소할 때 나는 효과음 A
+  const timeUpSound = useRef(new Audio('/timeUp2.mp3'));  // 시간이 완전히 끝났을 때 효과음 B
+  
+
 
   // -------------------------------------------------------------------
   //  STAGE 초기화
@@ -98,13 +107,23 @@ export function Play() {
       // 0s 표시 후에도 게이지는 width=0으로 남아있어야 함
       setTimeLeft(0);
 
+      timeUpSound.current.play().catch(() => {});  // 🔥 시간이 다 되면 효과음 B 재생
+
       // 1초간 0% 게이지 보여주고 나서 handleTimeUp
       handleTimeUp();
       return;
     }
-    const timer = setInterval(()=>{
-      setTimeLeft(prev=> prev-1);
-    },1000);
+    // 1초마다 감소하는 타이머 설정
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev > 1) {
+          tickSound.current.play().catch(() => {});  // 🔥 1초 줄어들 때 효과음 A 재생
+          return prev - 1;
+        } else {
+          return 0;  // 시간이 0이면 타이머 종료
+        }
+      });
+    }, 1000);
     return ()=> clearInterval(timer);
   },[timeLeft,phase]);
 
@@ -211,6 +230,7 @@ export function Play() {
         setTimeout(() => setStage(stage + 1), 1500);
       } else {
         setStatusMessage("Congratulations! You've beaten the frontman!");
+        setGameOver(true);
       }
     } else if (rr === 'agentWin') {
       setStatusMessage("You lose! Try again!");
@@ -266,31 +286,52 @@ export function Play() {
 
 
 
-  function decideAgentFinal(aL,aR,uL,uR){
-    if (!aL || !aR) return 'r'; // 🎯 안전 체크: 값이 없으면 기본값 리턴
+    function decideAgentFinal(aL, aR, uL, uR) {
+      if (!aL || !aR) return 'r';
+  
+      // 1️⃣ 에이전트가 동일한 손을 냈다면 그대로 선택
+      if (aL === aR) return aL;
+  
+      // 2️⃣ 무조건 이길 수 있는 손 찾기
+      const leftWin = doesAgentWin(aL, uL) && doesAgentWin(aL, uR);
+      const rightWin = doesAgentWin(aR, uL) && doesAgentWin(aR, uR);
+  
+      if (leftWin) return aL;
+      if (rightWin) return aR;
+  
+      // 3️⃣ 더 나은 무승부 선택하기
+      const leftDraw = doesDraw(aL, uL) || doesDraw(aL, uR);
+      const rightDraw = doesDraw(aR, uL) || doesDraw(aR, uR);
+  
+      if (leftDraw && rightDraw) {
+          return getBetterDrawOption(aL, aR, uL, uR);
+      }
+  
+      if (leftDraw) return aL;
+      if (rightDraw) return aR;
+  
+      // 4️⃣ 패배할 가능성이 낮은 손 선택
+      return getBetterLosingOption(aL, aR, uL, uR);
+  }
+  
+  // 🎯 두 개의 무승부 선택지 중 더 나은 손을 결정
+  function getBetterDrawOption(aL, aR, uL, uR) {
+      if (doesAgentWin(aL, uL) || doesAgentWin(aL, uR)) return aL;
+      if (doesAgentWin(aR, uL) || doesAgentWin(aR, uR)) return aR;
+      return aL;
+  }
+  
+  // 🎯 둘 다 패배하는 경우, 상대적으로 덜 불리한 손 선택
+  function getBetterLosingOption(aL, aR, uL, uR) {
+      const leftLosses = doesAgentWin(uL, aL) + doesAgentWin(uR, aL);
+      const rightLosses = doesAgentWin(uL, aR) + doesAgentWin(uR, aR);
+  
+      if (leftLosses < rightLosses) return aL;
+      if (rightLosses < leftLosses) return aR;
+      return aL;
+  }
+  
 
-    // 1️⃣ 에이전트가 동일한 손을 냈다면 그대로 선택
-    if (aL === aR) return aL;
-
-    // 2️⃣ 무조건 이길 수 있는 손 찾기
-    const leftWin = doesAgentWin(aL, uL) && doesAgentWin(aL, uR);
-    const rightWin = doesAgentWin(aR, uL) && doesAgentWin(aR, uR);
-
-    if (leftWin) return aL;  // 왼손이 무조건 이기면 왼손 선택
-    if (rightWin) return aR; // 오른손이 무조건 이기면 오른손 선택
-
-    // 3️⃣ 무승부를 만들 수 있는 손 찾기 (유저 손 중 하나와 같으면 선택)
-    if (aL === uL || aL === uR) return aL; // 왼손이 유저 손과 같으면 선택
-    if (aR === uL || aR === uR) return aR; // 오른손이 유저 손과 같으면 선택
-
-    // 4️⃣ 무승부를 만들 수 있는 추가 경우 찾기
-    // 예제) 유저: `s, p` (가위, 보)  에이전트: `r, s` (주먹, 가위) => `s` 선택하면 `s` vs `s` 무승부 가능
-    if (doesDraw(aL, uL) || doesDraw(aL, uR)) return aL;
-    if (doesDraw(aR, uL) || doesDraw(aR, uR)) return aR;
-
-    // 5️⃣ 이길 수도 없고, 무승부도 불가능하면 랜덤 선택
-    return Math.random() < 0.5 ? aL : aR;
-}
 
 // 🎯 무승부가 될 수 있는지 확인하는 함수
 function doesDraw(a, u) {
@@ -298,8 +339,9 @@ function doesDraw(a, u) {
 }
 
   // 사운드
-  const hoverSoundPlay=()=> {
-    // hoverSound.current.play().catch(()=>{});
+  const hoverSoundPlay = () => {
+    const hoverSound = new Audio('/hoverSound.mp3'); // 🔥 매번 새로운 Audio 객체 생성
+    hoverSound.play().catch(() => {});
   };
 
   // 타이머 게이지
@@ -365,6 +407,26 @@ function doesDraw(a, u) {
 
 
   return (
+
+    gameOver ? (
+      <main>
+      <div className="victory-screen">
+        <h1 className="victory-title">🏆 Victory! 🏆</h1>
+        <p className="victory-message">You've defeated all agents, including the Frontman!</p>
+        <div className="extra-buttons">
+          <button onClick={() => navigate('/invite')}>Send an invitation to friends as a winner</button>
+          <button onClick={() => navigate('/halloffame')}>Check your name on the Hall of Fame</button>
+        </div>
+      </div>
+      
+      <div className="retry-area">
+        <button className="retry-button" onClick={() => window.location.reload()}>
+          Retry
+        </button>
+      </div>
+    </main>
+    )
+    : (
     <main>
       {/* 닉네임 */}
       <div className="player-info">
@@ -536,11 +598,13 @@ function doesDraw(a, u) {
           Retry
         </button>
       </div>
+      {/* 이거 없앨거임임 */}
       <div className="extra-buttons">
         <button onClick={()=>navigate('/invite')}>Send an invitation to friends as a winner</button>
         <button onClick={()=>navigate('/halloffame')}>Check your name on the Hall of Fame</button>
       </div>
       <br/>
     </main>
+    )
   );
 }
