@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './app.css';
 import { Bell, BellOff } from 'lucide-react';
@@ -28,50 +28,26 @@ export default function App() {
   // 배경음악 관련 상태
   const [musicOn, setMusicOn] = React.useState(false);
   const [volume, setVolume] = React.useState(0.3);
-  const [isLoading, setIsLoading] = useState(true);
   const audioRef = React.useRef(null);
 
   
-  // ✅ 오디오 로드 감지 및 자동 재생
-  useEffect(() => {
-    if (audioRef.current) {
-      const audio = audioRef.current;
-
-      // 🔥 오디오 로딩 완료 감지
-      const handleCanPlayThrough = () => {
-        setIsLoading(false);
-        console.log("🎵 Audio fully loaded!");
-
-        // 🔥 유저 클릭 이벤트 필요 (자동 재생 방지 정책 우회)
-        document.addEventListener('click', enableAudioOnce);
-      };
-
-      // 🔥 에러 발생 시 예외 처리
-      const handleError = (e) => {
-        console.log("❌ Audio load error:", e);
-      };
-
-      audio.addEventListener('canplaythrough', handleCanPlayThrough);
-      audio.addEventListener('error', handleError);
-
-      return () => {
-        audio.removeEventListener('canplaythrough', handleCanPlayThrough);
-        audio.removeEventListener('error', handleError);
-      };
+  // ✅ 유저 클릭 시 음악 자동 재생 & 종 아이콘 변경
+  React.useEffect(() => {
+    function enableAudio() {
+      if (audioRef.current) {
+        audioRef.current.muted = false; // 유저 클릭 후 음소거 해제
+        audioRef.current.play().catch(error => console.log('Autoplay error:', error));
+        audioRef.current.play(); // 음악 자동 재생
+        setMusicOn(true); // 종 아이콘도 소리 켜진 상태로 변경
+        document.removeEventListener('click', enableAudio); // 이벤트 리스너 제거
+      }
     }
+    document.addEventListener('click', enableAudio);
+    return () => document.removeEventListener('click', enableAudio);
   }, []);
 
-  // ✅ 유저 클릭 시 오디오 자동 재생
-  const enableAudioOnce = () => {
-    if (audioRef.current) {
-      audioRef.current.muted = false;
-      setMusicOn(true);
-      document.removeEventListener('click', enableAudioOnce); // 한 번 실행 후 제거
-    }
-  };
-
-  // ✅ 음악 ON/OFF 토글
-  useEffect(() => {
+  // ✅ 음악 ON/OFF 토글 기능
+  React.useEffect(() => {
     if (audioRef.current) {
       audioRef.current.muted = !musicOn;
       audioRef.current.volume = volume;
@@ -98,7 +74,7 @@ export default function App() {
     <BrowserRouter>
       <div className="body bg-dark text-light">
         {/* 배경음악 import */}
-        <audio ref={audioRef} src="/Puccini_Turandot_Act_III_Nessun_dorma.mp3" loop autoPlay muted/>
+        <audio ref={audioRef} src="/bgm.mp3" loop muted />
 
         <header>
           <br />
@@ -147,35 +123,36 @@ export default function App() {
 
           {/* 배경음악 컨트롤 (오른쪽 상단 고정) */}
           <div
-            style={{
-              position: 'fixed',
-              top: '10px',
-              right: '10px',
-              display: 'flex',
-              alignItems: 'center',
-              background: 'rgba(0, 0, 0, 0.5)',
-              padding: '8px 12px',
-              borderRadius: '8px',
-              zIndex: 1000,
-            }}
-          >     
-        {isLoading ? (
-              <span style={{ color: 'white', marginRight: '10px' }}>🔄 Loading...</span>
-            ) : (
-              <button
-                onClick={() => setMusicOn(!musicOn)}
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  padding: '5px',
-                  display: 'flex',
-                  alignItems: 'center',
-                }}
-              >
-                {musicOn ? <Bell size={24} color="white" /> : <BellOff size={24} color="white" />}
-              </button>
-            )}
+        style={{
+          position: 'fixed',
+          top: '10px',
+          right: '10px',
+          display: 'flex',
+          alignItems: 'center',
+          background: 'rgba(0, 0, 0, 0.5)',
+          padding: '8px 12px',
+          borderRadius: '8px',
+          zIndex: 1000,
+        }}
+      >
+        {/* 종 아이콘 버튼 */}
+        <button
+          onClick={() => setMusicOn(!musicOn)}
+          style={{
+            background: 'none',
+            border: 'none',
+            cursor: 'pointer',
+            padding: '5px',
+            display: 'flex',
+            alignItems: 'center',
+          }}
+        >
+          {musicOn ? (
+            <Bell size={24} color="white" />
+          ) : (
+            <BellOff size={24} color="white" />
+          )}
+        </button>
 
         <input
             type="range"
