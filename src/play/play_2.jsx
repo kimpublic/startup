@@ -17,8 +17,8 @@ const DIFFERENT_OPTIONS = [
 ];
 const SAME_OPTIONS = [
   ['s','s'],
-  ['s','s'], // r
-  ['s','s'], // p
+  ['r','r'],
+  ['p','p'],
 ];
 
 // 헬퍼: (side='l'|'r', choice='s'|'r'|'p') => "man_l_r_2.png"
