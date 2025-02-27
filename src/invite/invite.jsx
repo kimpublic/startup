@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../app.css';
 import './invite.css';
@@ -7,16 +7,57 @@ export function Invite() {
   const navigate = useNavigate();
   const [friendName, setFriendName] = useState('');
   const [friendEmail, setFriendEmail] = useState('');
+  const [canInvite, setCanInvite] = useState(false);
+
+  useEffect(() => {
+    const currentEmail = localStorage.getItem('userEmail') || 'guest@example.com';
+    const userData = JSON.parse(localStorage.getItem(currentEmail)) || { frontmanDefeats: 0, friendInvites: 0, canInvite: false };
+
+    setCanInvite(userData.canInvite);
+  }, []);
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    if (!canInvite) return;
+
     alert(`Invitation sent to ${friendName} at ${friendEmail}!`);
+
+    // ✅ 초대 횟수 증가
+    const currentNick = localStorage.getItem('nickName') || 'Guest';
+    const currentInvites = Number(localStorage.getItem('friendInvites')) || 0;
+    const newInvites = currentInvites + 1;
+    localStorage.setItem('friendInvites', newInvites);
+
+    // ✅ 초대 랭킹 업데이트
+    const inviteScores = JSON.parse(localStorage.getItem('inviteScores')) || [];
+    const existingIndex = inviteScores.findIndex((entry) => entry.name === currentNick);
+
+    if (existingIndex !== -1) {
+      inviteScores[existingIndex].score += 1;
+    } else {
+      inviteScores.push({ name: currentNick, score: 1 });
+    }
+
+    // ✅ 10위까지만 유지
+    const updatedInviteScores = inviteScores.sort((a, b) => b.score - a.score).slice(0, 10);
+    localStorage.setItem('inviteScores', JSON.stringify(updatedInviteScores));
+
+    // ✅ 초대 가능 여부를 `false`로 변경
+    const currentEmail = localStorage.getItem('userEmail') || 'guest@example.com';
+    const userData = JSON.parse(localStorage.getItem(currentEmail)) || { frontmanDefeats: 0, friendInvites: 0, canInvite: false };
+
+    userData.friendInvites += 1;
+    userData.canInvite = false; // ✅ 초대 후 false로 변경
+
+    localStorage.setItem(currentEmail, JSON.stringify(userData));
+    setCanInvite(false);
+
     setFriendName('');
     setFriendEmail('');
   };
 
   return (
-    <main>
+    <main className="invite-page">
       <h1>Congratulations on Your Victory!</h1>
       <div className="text-container">
         <p>
@@ -54,7 +95,7 @@ export function Invite() {
           />
         </div>
 
-        <button type="submit">Send Invitation</button>
+        <button type="submit" disabled={!canInvite}>{canInvite ? "Send Invitation" : "Invitation Already Sent"}</button>
       </form>
 
       <br />

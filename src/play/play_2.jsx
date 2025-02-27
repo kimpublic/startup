@@ -4,10 +4,10 @@ import '../app.css';
 import './play.css';
 
 const STAGE_INFO = [
-  { agentName: 'Agent Donggeurami', sameProbability: 1.0, timeLimit: 5 }, // 0.3
-  { agentName: 'Agent Semo', sameProbability: 1.0, timeLimit: 4 }, // 0.1
-  { agentName: 'Agent Nemo', sameProbability: 1.0, timeLimit: 3 },
-  { agentName: 'Agent Frontman', sameProbability: 1.0, timeLimit: 2 },
+  { agentName: 'Agent Donggeurami', sameProbability: 1.0, timeLimit: 2, imageSrc: 'prt_1.png' }, // 0.3 5
+  { agentName: 'Agent Semo', sameProbability: 1.0, timeLimit: 2, imageSrc: 'prt_2.png' }, // 0.1 4 
+  { agentName: 'Agent Nemo', sameProbability: 1.0, timeLimit: 2, imageSrc: 'prt_3.png' }, // 3
+  { agentName: 'Agent Frontman', sameProbability: 1.0, timeLimit: 2, imageSrc: 'prt_5.png' },
 ];
 
 const DIFFERENT_OPTIONS = [
@@ -17,8 +17,8 @@ const DIFFERENT_OPTIONS = [
 ];
 const SAME_OPTIONS = [
   ['s','s'],
-  ['r','r'],
-  ['p','p'],
+  ['s','s'], // r
+  ['s','s'], // p
 ];
 
 // 헬퍼: (side='l'|'r', choice='s'|'r'|'p') => "man_l_r_2.png"
@@ -65,9 +65,13 @@ export function Play() {
   // const hoverSound = useRef(new Audio('/hoverSound.mp3'));
   const clickSound = useRef(new Audio('/clickSound.mp3'));
 
-  // 효과음 추가 🔥
-  const tickSound = useRef(new Audio('/tick.mp3'));  // 1초 감소할 때 나는 효과음 A
-  const timeUpSound = useRef(new Audio('/timeUp2.mp3'));  // 시간이 완전히 끝났을 때 효과음 B
+  // 효과음 추가 
+  const tickSound = useRef(new Audio('/tick.mp3'));  // 1초 감소할 때 나는 효과음
+  const timeUpSound = useRef(new Audio('/timeUp2.mp3'));  // 시간이 완전히 끝났을 때 효과음
+
+  const loseSound = useRef(new Audio('/lose.mp3')); //  패배 효과음
+  const victorySound = useRef(new Audio('/victory.mp3')); //  프론트맨 격파 효과음
+
   
 
 
@@ -107,7 +111,7 @@ export function Play() {
       // 0s 표시 후에도 게이지는 width=0으로 남아있어야 함
       setTimeLeft(0);
 
-      timeUpSound.current.play().catch(() => {});  // 🔥 시간이 다 되면 효과음 B 재생
+      timeUpSound.current.play().catch(() => {});  // 시간이 다 되면 효과음 B 재생
 
       // 1초간 0% 게이지 보여주고 나서 handleTimeUp
       handleTimeUp();
@@ -117,7 +121,7 @@ export function Play() {
     const timer = setInterval(() => {
       setTimeLeft((prev) => {
         if (prev > 1) {
-          tickSound.current.play().catch(() => {});  // 🔥 1초 줄어들 때 효과음 A 재생
+          tickSound.current.play().catch(() => {});  // 1초 줄어들 때 효과음 A 재생
           return prev - 1;
         } else {
           return 0;  // 시간이 0이면 타이머 종료
@@ -132,6 +136,7 @@ export function Play() {
       // 왼/오 다 골랐으면 finalPick
       if(!userLeft||!userRight){
         setStatusMessage("Time's up! You didn't pick both. You lose!");
+        loseSound.current.play().catch(() => {});
         setPhase('result');
       } else {
         setPhase('finalPick');
@@ -146,6 +151,7 @@ export function Play() {
         const aF= decideAgentFinal(agentLeft, agentRight, userLeft, userRight);
         setAgentFinal(aF);
         setStatusMessage("Time's up! You didn't pick final. You lose!");
+        loseSound.current.play().catch(() => {});
         setPhase('result');
       } else {
         finishRound();
@@ -231,9 +237,44 @@ export function Play() {
       } else {
         setStatusMessage("Congratulations! You've beaten the frontman!");
         setGameOver(true);
+
+        victorySound.current.play().catch(() => {});
+        
+        // ✅ 현재 로그인한 유저의 데이터 가져오기
+        const currentEmail = localStorage.getItem('userEmail') || 'guest@example.com';
+        const userData = JSON.parse(localStorage.getItem(currentEmail)) || { frontmanDefeats: 0, friendInvites: 0, canInvite: false };
+
+        // ✅ frontmanDefeats 증가
+        userData.frontmanDefeats += 1;
+
+        // ✅ 개별 유저의 초대 가능 여부를 true로 변경
+        userData.canInvite = true;
+
+        // ✅ 개별 유저 데이터 저장
+        localStorage.setItem(currentEmail, JSON.stringify(userData));
+        
+
+
+        // ✅ Hall of Fame 랭킹 업데이트
+        const defeatScores = JSON.parse(localStorage.getItem('defeatScores')) || [];
+        const existingIndex = defeatScores.findIndex((entry) => entry.name === nickName);
+
+        if (existingIndex !== -1) {
+          defeatScores[existingIndex].score += 1;
+        } else {
+          defeatScores.push({ name: nickName, score: 1 });
+        }
+
+        // ✅ 10위까지만 유지
+        const updatedDefeatScores = defeatScores.sort((a, b) => b.score - a.score).slice(0, 10);
+        localStorage.setItem('defeatScores', JSON.stringify(updatedDefeatScores));
+
+
       }
     } else if (rr === 'agentWin') {
       setStatusMessage("You lose! Try again!");
+
+      loseSound.current.play().catch(() => {});
     } else {
       setStatusMessage("Draw! Restarting stage...");
       setTimeout(() => resetStage(), 1500);  // 🎯 무승부 시 현재 스테이지를 다시 세팅
@@ -448,7 +489,7 @@ function doesDraw(a, u) {
         <tbody>
           <tr>
             <td colSpan="2" className="agent-image-cell">
-              <img src="prt_1.png" alt="Game Agent" height="220"/>
+              <img src={STAGE_INFO[stage].imageSrc} alt="Game Agent" height="220"/>
             </td>
           </tr>
           <tr>
