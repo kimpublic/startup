@@ -26,33 +26,31 @@ export default function App() {
   const [nickName, setNickName] = React.useState(savedNick);
 
   // 배경음악 관련 상태
-  const [musicOn, setMusicOn] = React.useState(true);
+  const [musicOn, setMusicOn] = React.useState(false);
   const [volume, setVolume] = React.useState(0.3);
   const audioRef = React.useRef(null);
 
   
-  // 페이지 로드 시 오디오 자동 재생 설정
+  // 유저 클릭 시 음악 재생
   React.useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.muted = true; // 초기 음소거 (브라우저 자동 재생 차단 우회)
-      audioRef.current.play().catch((err) => console.log("Autoplay blocked:", err));
-
-      setTimeout(() => {
-        if (musicOn) {
-          audioRef.current.muted = false; // 1초 후 음소거 해제
-          audioRef.current.volume = volume; // 현재 볼륨 값 적용
-        }
-      }, 1000);
+    function enableAudio() {
+      if (audioRef.current) {
+        audioRef.current.muted = false; // 유저 클릭 후 음소거 해제
+        setMusicOn(true);
+        document.removeEventListener('click', enableAudio); // 이벤트 리스너 제거
+      }
     }
-  }, [musicOn]);
+    document.addEventListener('click', enableAudio);
+    return () => document.removeEventListener('click', enableAudio);
+  }, []);
 
-  // 볼륨 조절 시 즉시 반영 (버퍼링 없이)
+  // 음악 ON/OFF 토글
   React.useEffect(() => {
     if (audioRef.current) {
+      audioRef.current.muted = !musicOn;
       audioRef.current.volume = volume;
     }
-  }, [volume]);
-
+  }, [musicOn, volume]);
 
   function handleLogin(email, nickName) {
     localStorage.setItem('userEmail', email);
