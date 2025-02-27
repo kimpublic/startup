@@ -30,12 +30,29 @@ export default function App() {
   const [volume, setVolume] = React.useState(0.3);
   const audioRef = React.useRef(null);
 
+  
+  // 페이지 로드 시 오디오 자동 재생 설정
   React.useEffect(() => {
     if (audioRef.current) {
-      audioRef.current.muted = !musicOn;
+      audioRef.current.muted = true; // 초기 음소거 (브라우저 자동 재생 차단 우회)
+      audioRef.current.play().catch((err) => console.log("Autoplay blocked:", err));
+
+      setTimeout(() => {
+        if (musicOn) {
+          audioRef.current.muted = false; // 1초 후 음소거 해제
+          audioRef.current.volume = volume; // 현재 볼륨 값 적용
+        }
+      }, 1000);
+    }
+  }, [musicOn]);
+
+  // 볼륨 조절 시 즉시 반영 (버퍼링 없이)
+  React.useEffect(() => {
+    if (audioRef.current) {
       audioRef.current.volume = volume;
     }
-  }, [musicOn, volume]);
+  }, [volume]);
+
 
   function handleLogin(email, nickName) {
     localStorage.setItem('userEmail', email);

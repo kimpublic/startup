@@ -4,10 +4,10 @@ import '../app.css';
 import './play.css';
 
 const STAGE_INFO = [
-  { agentName: 'Agent Donggeurami', sameProbability: 1.0, timeLimit: 2, imageSrc: 'prt_1.png' }, // 0.3 5
-  { agentName: 'Agent Semo', sameProbability: 1.0, timeLimit: 2, imageSrc: 'prt_2.png' }, // 0.1 4 
-  { agentName: 'Agent Nemo', sameProbability: 1.0, timeLimit: 2, imageSrc: 'prt_3.png' }, // 3
-  { agentName: 'Agent Frontman', sameProbability: 1.0, timeLimit: 2, imageSrc: 'prt_5.png' },
+  { agentName: 'Agent Donggeurami', sameProbability: 0.3, timeLimit: 5, imageSrc: 'prt_1.png' }, // 0.3 5
+  { agentName: 'Agent Semo', sameProbability: 0.1, timeLimit: 4, imageSrc: 'prt_2.png' }, // 0.1 4 
+  { agentName: 'Agent Nemo', sameProbability: 0.0, timeLimit: 3, imageSrc: 'prt_3.png' }, // 3
+  { agentName: 'Agent Frontman', sameProbability: 0.0, timeLimit: 2, imageSrc: 'prt_5.png' },
 ];
 
 const DIFFERENT_OPTIONS = [
