@@ -8,49 +8,50 @@ export function Invite() {
   const [friendName, setFriendName] = useState('');
   const [friendEmail, setFriendEmail] = useState('');
   const [canInvite, setCanInvite] = useState(false);
+  const [friendInvites, setFriendInvites] = useState(0);
+
+  // ✅ 백엔드에서 현재 유저 정보 가져오기
+  async function fetchUserStats() {
+    try {
+      const response = await fetch('/api/user/stats');
+      if (!response.ok) throw new Error('Failed to fetch user stats');
+      const data = await response.json();
+
+      setCanInvite(data.canInvite);  // ✅ 초대 가능 여부 업데이트
+      setFriendInvites(data.friendInvites); // ✅ 초대 횟수 업데이트
+    } catch (error) {
+      console.error('Error fetching user stats:', error);
+    }
+  }
 
   useEffect(() => {
-    const currentEmail = localStorage.getItem('userEmail') || 'guest@example.com';
-    const userData = JSON.parse(localStorage.getItem(currentEmail)) || { frontmanDefeats: 0, friendInvites: 0, canInvite: false };
-
-    setCanInvite(userData.canInvite);
+    fetchUserStats();
   }, []);
 
-  const handleSubmit = (event) => {
+  async function handleSubmit(event) {
     event.preventDefault();
     if (!canInvite) return;
 
-    alert(`Invitation sent to ${friendName} at ${friendEmail}!`);
+    try {
+      // ✅ 초대 API 요청
+      const response = await fetch('/api/scores/invites', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
 
-    // ✅ 초대 횟수 증가
-    const currentNick = localStorage.getItem('nickName') || 'Guest';
-    const currentInvites = Number(localStorage.getItem('friendInvites')) || 0;
-    const newInvites = currentInvites + 1;
-    localStorage.setItem('friendInvites', newInvites);
+      if (!response.ok) throw new Error('Failed to update invite count');
+      const updatedData = await response.json();
 
-    // ✅ 초대 랭킹 업데이트
-    const inviteScores = JSON.parse(localStorage.getItem('inviteScores')) || [];
-    const existingIndex = inviteScores.findIndex((entry) => entry.name === currentNick);
+      // ✅ 초대 가능 여부 업데이트 (백엔드에서 자동 처리)
+      setCanInvite(updatedData.canInvite);
+      setFriendInvites(updatedData.friendInvites);
 
-    if (existingIndex !== -1) {
-      inviteScores[existingIndex].score += 1;
-    } else {
-      inviteScores.push({ name: currentNick, score: 1 });
+      alert(`Invitation sent to ${friendName} at ${friendEmail}!`);
+
+      // ✅ 이메일 초대 API 추가 예정 (여기에서 실행 가능)
+    } catch (error) {
+      console.error('Error updating invite count:', error);
     }
-
-    // ✅ 10위까지만 유지
-    const updatedInviteScores = inviteScores.sort((a, b) => b.score - a.score).slice(0, 10);
-    localStorage.setItem('inviteScores', JSON.stringify(updatedInviteScores));
-
-    // ✅ 초대 가능 여부를 `false`로 변경
-    const currentEmail = localStorage.getItem('userEmail') || 'guest@example.com';
-    const userData = JSON.parse(localStorage.getItem(currentEmail)) || { frontmanDefeats: 0, friendInvites: 0, canInvite: false };
-
-    userData.friendInvites += 1;
-    userData.canInvite = false; // ✅ 초대 후 false로 변경
-
-    localStorage.setItem(currentEmail, JSON.stringify(userData));
-    setCanInvite(false);
 
     setFriendName('');
     setFriendEmail('');

@@ -5,27 +5,18 @@ import '../app.css';
 export function Unauthenticated({ onLogin }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
 
-  const handleLogin = async (isCreate = false) => {
+  const handleLogin = (isCreate = false) => {
     if (!email || !password) {
       alert('Please enter Email and Password!');
       return;
     }
-
-    const endpoint = isCreate ? '/api/auth/create' : '/api/auth/login';
-    const response = await fetch(endpoint, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }),
-    });
-
-    const result = await response.json();
-    if (response.ok) {
-      onLogin(result.email, result.nickName || '');
+    if (isCreate) {
+      console.log('Creating new account (Mock)');
     } else {
-      setError(result.msg || 'Authentication failed.');
+      console.log('Logging in (Mock)');
     }
+    onLogin(email, ''); // 닉네임은 아직 없음
   };
 
   return (
@@ -48,15 +39,13 @@ export function Unauthenticated({ onLogin }) {
           <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
         </div>
 
-        {error && <p style={{ color: 'red' }}>{error}</p>}
-
         <br />
 
         <div className="btn-container">
-          <button type="submit" style={{ minWidth: '80px' }}>
+          <button type="submit" onClick={() => handleLogin(false)} style={{ minWidth: '80px' }}>
             Login
           </button>
-          <button type="button" onClick={() => handleLogin(true)} style={{ minWidth: '80px' }}>
+          <button type="submit" onClick={() => handleLogin(true)} style={{ minWidth: '80px' }}>
             Create
           </button>
         </div>

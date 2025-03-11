@@ -4,10 +4,10 @@ import '../app.css';
 import './play.css';
 
 const STAGE_INFO = [
-  { agentName: 'Agent Donggeurami', sameProbability: 1.0, timeLimit: 2, imageSrc: 'prt_1.png' }, // 0.3 5
-  { agentName: 'Agent Semo', sameProbability: 1.0, timeLimit: 2, imageSrc: 'prt_2.png' }, // 0.1 4 
-  { agentName: 'Agent Nemo', sameProbability: 1.0, timeLimit: 2, imageSrc: 'prt_3.png' }, // 3
-  { agentName: 'Agent Frontman', sameProbability: 1.0, timeLimit: 2, imageSrc: 'prt_5.png' },
+  { agentName: 'Agent Donggeurami', sameProbability: 0.3, timeLimit: 5, imageSrc: 'prt_1.png' }, // 0.3 5
+  { agentName: 'Agent Semo', sameProbability: 0.1, timeLimit: 4, imageSrc: 'prt_2.png' }, // 0.1 4 
+  { agentName: 'Agent Nemo', sameProbability: 0.0, timeLimit: 3, imageSrc: 'prt_3.png' }, // 3
+  { agentName: 'Agent Frontman', sameProbability: 0.0, timeLimit: 2, imageSrc: 'prt_5.png' },
 ];
 
 const DIFFERENT_OPTIONS = [
@@ -17,16 +17,9 @@ const DIFFERENT_OPTIONS = [
 ];
 const SAME_OPTIONS = [
   ['s','s'],
-  ['s','s'],
-  ['s','s'],
-];
-
-const SAME_OPTIONS1 = [ // original
-  ['s','s'],
   ['r','r'],
   ['p','p'],
 ];
-
 
 // 헬퍼: (side='l'|'r', choice='s'|'r'|'p') => "man_l_r_2.png"
 function getHandImage(side, choice){
@@ -38,7 +31,7 @@ export function Play() {
   const navigate = useNavigate();
 
   // 로그인 닉네임
-  const [nickName, setNickName] = useState('Guest');
+  const nickName = localStorage.getItem('nickName') || '';
 
   // 스테이지 0~3
   const [stage, setStage] = useState(0);
@@ -79,52 +72,6 @@ export function Play() {
   const loseSound = useRef(new Audio('/lose.mp3')); //  패배 효과음
   const victorySound = useRef(new Audio('/victory.mp3')); //  프론트맨 격파 효과음
 
-  
-  useEffect(() => {
-    async function fetchUserStats() {
-      try {
-        const response = await fetch('/api/user/stats');
-        if (!response.ok) throw new Error('Failed to fetch user stats');
-        const data = await response.json();
-        setNickName(data.nickName || 'Guest'); // 닉네임이 없으면 'Guest' 표시
-      } catch (error) {
-        console.error('Error fetching user stats:', error);
-      }
-    }
-    fetchUserStats();
-  }, []);
-
-
-
-  async function updateDefeatCount() {
-    try {
-      const response = await fetch('/api/scores/defeats', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include' // 쿠키 포함해서 보내기
-      });
-  
-      if (!response.ok) throw new Error('Failed to update defeat count');
-      const data = await response.json();
-      
-      console.log('✅ Defeat count updated:', data);
-    } catch (error) {
-      console.error('❌ Error updating defeat count:', error);
-    }
-  }
-  
-  
-  async function fetchHallOfFame() {
-    try {
-      const response = await fetch('/api/scores/defeats');
-      if (!response.ok) throw new Error('Failed to fetch rankings');
-      const updatedDefeatScores = await response.json();
-      
-      console.log('✅ Updated Hall of Fame:', updatedDefeatScores);
-    } catch (error) {
-      console.error('❌ Error fetching Hall of Fame:', error);
-    }
-  }
   
 
 
@@ -292,10 +239,37 @@ export function Play() {
         setGameOver(true);
 
         victorySound.current.play().catch(() => {});
+        
+        // ✅ 현재 로그인한 유저의 데이터 가져오기
+        const currentEmail = localStorage.getItem('userEmail') || 'guest@example.com';
+        const userData = JSON.parse(localStorage.getItem(currentEmail)) || { frontmanDefeats: 0, friendInvites: 0, canInvite: false };
 
-        updateDefeatCount();
+        // ✅ frontmanDefeats 증가
+        userData.frontmanDefeats += 1;
 
-        fetchHallOfFame();
+        // ✅ 개별 유저의 초대 가능 여부를 true로 변경
+        userData.canInvite = true;
+
+        // ✅ 개별 유저 데이터 저장
+        localStorage.setItem(currentEmail, JSON.stringify(userData));
+        
+
+
+        // ✅ Hall of Fame 랭킹 업데이트
+        const defeatScores = JSON.parse(localStorage.getItem('defeatScores')) || [];
+        const existingIndex = defeatScores.findIndex((entry) => entry.name === nickName);
+
+        if (existingIndex !== -1) {
+          defeatScores[existingIndex].score += 1;
+        } else {
+          defeatScores.push({ name: nickName, score: 1 });
+        }
+
+        // ✅ 10위까지만 유지
+        const updatedDefeatScores = defeatScores.sort((a, b) => b.score - a.score).slice(0, 10);
+        localStorage.setItem('defeatScores', JSON.stringify(updatedDefeatScores));
+
+
       }
     } else if (rr === 'agentWin') {
       setStatusMessage("You lose! Try again!");
