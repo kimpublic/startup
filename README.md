@@ -146,13 +146,17 @@ For this deliverable, I did the following. I checked the box `[x]` and added a d
 
 For this deliverable, I did the following. I checked the box `[x]` and added a description for things I completed.
     
-- [ ] **Node.js/Express HTTP service** - I did not complete this part of the deliverable.
-- [ ] **Static middleware for frontend** - I did not complete this part of the deliverable.
-- [ ] **Calls to third party endpoints** - I did not complete this part of the deliverable.
-- [ ] **Backend service endpoints** - I did not complete this part of the deliverable.
-- [ ] **Frontend calls service endpoints** - I did not complete this part of the deliverable.
-- [ ] **Supports registration, login, logout, and restricted endpoint** - I did not complete this part of the deliverable.
+- [x] **Node.js/Express HTTP service** 
+- [x] **Static middleware for frontend** 
+- [x] **Calls to third party endpoints** 
+- [x] **Backend service endpoints** 
+- [x] **Frontend calls service endpoints** 
+- [x] **Supports registration, login, logout, and restricted endpoint**
 
+Supports user account creation, login, and authentication as Simon does.
+Integrated **Gmail sending API** with **Nodemailer** to send an invitation so that winners can invite their friends.
+Hall of Fame Rankings are processed as Simon does.
+Deployment was soooo confusing. As .env is not recommended to be uploaded online, to deal with environmental parameters, I added the parameters on AWS as secure strings with Parameter Store after adding IAM role to my instance.
 
 ## 🚀 DB/Login deliverable
 
