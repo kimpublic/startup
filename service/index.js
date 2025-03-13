@@ -15,12 +15,21 @@ const port = process.argv.length > 2 ? process.argv[2] : 4000;
 const authCookieName = 'authToken';
 
 
-
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://startup.rockpaperscissorsminusone.link/',
+];
 
 
 // ✅ CORS 설정 추가
 app.use(cors({
-  origin: 'http://localhost:5173',  // 프론트엔드 주소
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true  // 쿠키 포함 허용
 }));
 
@@ -34,6 +43,9 @@ async function initParameters() {
   process.env.EMAIL_PASS = await getParameterValue('/myapp/EMAIL_PASS');
   process.env.SECRET_KEY = await getParameterValue('/myapp/SECRET_KEY');
   console.log('✅ Parameter Store values loaded!');
+  console.log('🔍 EMAIL_USER:', process.env.EMAIL_USER);
+  console.log('🔍 EMAIL_PASS:', process.env.EMAIL_PASS ? 'LOADED' : 'MISSING'); // 비밀번호는 보안 때문에 직접 표시 안 함
+  console.log('🔍 SECRET_KEY:', process.env.SECRET_KEY);
 }
 
 async function startServer() {
