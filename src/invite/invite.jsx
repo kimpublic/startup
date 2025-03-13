@@ -8,17 +8,16 @@ export function Invite() {
   const [friendName, setFriendName] = useState('');
   const [friendEmail, setFriendEmail] = useState('');
   const [canInvite, setCanInvite] = useState(false);
-  const [friendInvites, setFriendInvites] = useState(0);
+  const [message, setMessage] = useState('');
 
-  // ✅ 백엔드에서 현재 유저 정보 가져오기
+  // ✅ 백엔드에서 현재 유저 초대 가능 여부 가져오기
   async function fetchUserStats() {
     try {
       const response = await fetch('/api/user/stats');
       if (!response.ok) throw new Error('Failed to fetch user stats');
-      const data = await response.json();
 
-      setCanInvite(data.canInvite);  // ✅ 초대 가능 여부 업데이트
-      setFriendInvites(data.friendInvites); // ✅ 초대 횟수 업데이트
+      const data = await response.json();
+      setCanInvite(data.canInvite); // ✅ 백엔드에서 canInvite 값 받아와서 업데이트
     } catch (error) {
       console.error('Error fetching user stats:', error);
     }
@@ -32,25 +31,44 @@ export function Invite() {
     event.preventDefault();
     if (!canInvite) return;
 
+    setMessage('Sending invitation...');
+
     try {
-      // ✅ 초대 API 요청
-      const response = await fetch('/api/scores/invites', {
+      // ✅ 초대 횟수 증가 요청 (백엔드 API 호출)
+      const inviteResponse = await fetch('/api/scores/invites', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' }
       });
 
-      if (!response.ok) throw new Error('Failed to update invite count');
-      const updatedData = await response.json();
+      if (!inviteResponse.ok) throw new Error('Failed to update invite count');
+      const updatedData = await inviteResponse.json();
 
-      // ✅ 초대 가능 여부 업데이트 (백엔드에서 자동 처리)
-      setCanInvite(updatedData.canInvite);
-      setFriendInvites(updatedData.friendInvites);
+      setCanInvite(updatedData.canInvite); // ✅ 초대 가능 여부 업데이트
 
-      alert(`Invitation sent to ${friendName} at ${friendEmail}!`);
+      // ✅ 이메일 전송 요청
+      const emailResponse = await fetch('http://localhost:4000/send-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          to: friendEmail,
+          name: friendName
+        }),
+        credentials: 'include'
+      });
 
-      // ✅ 이메일 초대 API 추가 예정 (여기에서 실행 가능)
+      const emailResult = await emailResponse.json();
+
+      if (emailResponse.status === 429) {
+        setMessage(emailResult.msg); // ✅ "현재 서버 요청량이 많으니 잠시 후 다시 시도해 주세요."
+        setCanInvite(false);
+      } else if (emailResponse.ok) {
+        setMessage('Invitation successfully sent! 🎉');
+      } else {
+        setMessage('Failed to send email. Please try again.');
+      }
     } catch (error) {
-      console.error('Error updating invite count:', error);
+      console.error('Error:', error);
+      setMessage('An error occurred. Please try again later.');
     }
 
     setFriendName('');
@@ -98,6 +116,9 @@ export function Invite() {
 
         <button type="submit" disabled={!canInvite}>{canInvite ? "Send Invitation" : "Invitation Already Sent"}</button>
       </form>
+
+      {/* ✅ 메시지 출력 */}
+      {message && <p className="invite-message">{message}</p>}
 
       <br />
 

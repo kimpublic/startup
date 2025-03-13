@@ -4,15 +4,44 @@ const bcrypt = require('bcryptjs');
 const uuid = require('uuid');
 const jwt = require('jsonwebtoken');
 
+require('dotenv').config();
+const nodemailer = require('nodemailer');
+
+const cors = require('cors');
+const { getParameterValue } = require('./paramStore');
+
 const app = express();
 const port = process.argv.length > 2 ? process.argv[2] : 4000;
 const authCookieName = 'authToken';
-const SECRET_KEY = 'your-secret-key'; // JWT 서명 키 (실제 서비스에서는 환경변수로 설정해야 함)
+
+
+
+
+
+// ✅ CORS 설정 추가
+app.use(cors({
+  origin: 'http://localhost:5173',  // 프론트엔드 주소
+  credentials: true  // 쿠키 포함 허용
+}));
 
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.static('public'));
 
+async function initParameters() {
+  console.log('🔍 Fetching AWS Parameter Store values...');
+  process.env.EMAIL_USER = await getParameterValue('/myapp/EMAIL_USER');
+  process.env.EMAIL_PASS = await getParameterValue('/myapp/EMAIL_PASS');
+  process.env.SECRET_KEY = await getParameterValue('/myapp/SECRET_KEY');
+  console.log('✅ Parameter Store values loaded!');
+}
+
+async function startServer() {
+  await initParameters();
+
+  const SECRET_KEY = process.env.SECRET_KEY;
+
+  
 let users = [
     // 예제 데이터
     // { email: 'test@test.com', password: 'hashedPw', nickName: 'Player1', frontmanDefeats: 3, friendInvites: 2 }
@@ -236,97 +265,99 @@ try {
 
 });
 
-app.post('/api/scores/defeats', (req, res) => {
-    const token = req.cookies[authCookieName];
-    if (!token) return res.status(401).send({ msg: 'Unauthorized' });
-  
-    try {
-      const { email } = jwt.verify(token, SECRET_KEY);
-      const user = users.find((u) => u.email === email);
-      if (!user) return res.status(404).send({ msg: 'User not found' });
-  
-      user.frontmanDefeats = (user.frontmanDefeats || 0) + 1;
-      user.canInvite = true; // 승리 후 초대 가능
 
-      res.send({
-        email: user.email,
-        nickName: user.nickName,
-        frontmanDefeats: user.frontmanDefeats,
-        friendInvites: user.friendInvites,
-        canInvite: user.canInvite
-      });
-      
-    
-    } catch (error) {
-      res.status(401).send({ msg: 'Invalid token' });
+// ✅ 이메일 전송 제한 설정 (5분 동안 최대 10개)
+const EMAIL_LIMIT = 10;
+const TIME_FRAME = 5 * 60 * 1000; // 5분 (밀리초)
+
+// ✅ 이메일 전송 기록 저장 (서버 메모리 사용)
+const emailLogs = {};
+
+app.post('/send-email', (req, res) => {
+    const userIp = req.ip; // 유저 식별 (IP 기준)
+    const now = Date.now();
+
+    const token = req.cookies[authCookieName]; // ✅ 유저 인증을 위해 쿠키에서 토큰 가져오기
+    if (!token) {
+        return res.status(401).json({ msg: 'Unauthorized: No token provided' });
     }
-  });
 
-  
-app.post('/api/scores/invites', (req, res) => {
-const token = req.cookies[authCookieName];
-if (!token) return res.status(401).send({ msg: 'Unauthorized' });
+    if (!emailLogs[userIp]) {
+        emailLogs[userIp] = [];
+    }
 
-try {
     const { email } = jwt.verify(token, SECRET_KEY);
-    const user = users.find((u) => u.email === email);
-    if (!user) return res.status(404).send({ msg: 'User not found' });
+        const user = users.find(u => u.email === email);
+        if (!user) {
+            return res.status(404).json({ msg: 'User not found' });
+        }
 
-    user.friendInvites = (user.friendInvites || 0) + 1;
-    user.canInvite = false; // 초대 후 다시 초대 불가하도록 설정정
-    res.send({
-        email: user.email,
-        nickName: user.nickName,
-        frontmanDefeats: user.frontmanDefeats,
-        friendInvites: user.friendInvites
-      });
-
-
-
-// ✅ 프론트맨 격파 랭킹 조회 (상위 10명 반환)
-app.get('/api/scores/defeats', (req, res) => {
-    try {
-        const defeatRanking = users
-            .map((user) => ({
-                name: user.nickName || user.email, // 닉네임 없으면 이메일 표시
-                score: user.frontmanDefeats || 0
-            }))
-            .sort((a, b) => b.score - a.score) // 내림차순 정렬
-            .slice(0, 10); // 상위 10명만 반환
-
-        res.json(defeatRanking);
-    } catch (error) {
-        console.error('Error fetching defeat scores:', error);
-        res.status(500).send({ msg: 'Failed to fetch defeat scores' });
-    }
-});
-
-// ✅ 초대 횟수 랭킹 조회 (상위 10명 반환)
-app.get('/api/scores/invites', (req, res) => {
-    try {
-        const inviteRanking = users
-            .map((user) => ({
-                name: user.nickName || user.email,
-                score: user.friendInvites || 0
-            }))
-            .sort((a, b) => b.score - a.score)
-            .slice(0, 10);
-
-        res.json(inviteRanking);
-    } catch (error) {
-        console.error('Error fetching invite scores:', error);
-        res.status(500).send({ msg: 'Failed to fetch invite scores' });
-    }
-});
-
-      
     
-} catch (error) {
-    res.status(401).send({ msg: 'Invalid token' });
-}
+
+    // ✅ 5분이 지난 이메일 로그 삭제
+    emailLogs[userIp] = emailLogs[userIp].filter(timestamp => now - timestamp < TIME_FRAME);
+
+    if (emailLogs[userIp].length >= EMAIL_LIMIT) {
+        return res.status(429).json({ 
+            msg: 'The server is currently experiencing a high volume of requests. Please try again later.', 
+            
+        });
+    }
+
+    // ✅ 이메일 전송 기록 추가
+    emailLogs[userIp].push(now);
+
+    // 📩 Nodemailer 이메일 전송
+    const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: process.env.EMAIL_USER, 
+            pass: process.env.EMAIL_PASS 
+        }
+    });
+
+    const { to, name } = req.body;
+
+    // ✅ 이메일 내용 구성
+    const mailOptions = {
+      from: `"Squid Game Invitation" <${process.env.EMAIL_USER}>`,
+      to: to,
+      subject: `${user.nickName || 'Your Friend'} invited you to Game!`,
+      html: `
+          <h2>You've been invited to play!</h2>
+          <p>Dear ${name || 'Friend'},</p>
+          <p>Your friend <strong>${user.nickName}</strong> has invited you to join the Squid Game challenge.</p>
+          <p>Click the link below to accept the invitation:</p>
+          <a href="https://startup.rockpaperscissorsminusone.link/">Join the Game</a>
+          <p>See you in the arena!</p>
+          <br />
+          <p>(This email is sent as a part of Minjoong's CS260 project)</p>
+          <br />
+          <p>Best regards,</p>
+          <p>Game Maker Minjoong Kim</p>
+      `
+  };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            return res.status(500).json({ msg: 'Failed to send invitation email', error });
+        }
+        console.log(`✅ 메일 전송 성공!`);
+        console.log(`   - 수신자: ${mailOptions.to}`);
+        console.log(`   - 메시지 ID: ${info.messageId}`);
+        console.log(`   - SMTP 응답: ${info.response}`);
+        res.json({ msg: 'Invitation sent successfully!'});
+    });
 });
-  
-  
+
+
 app.listen(port, () => {
-  console.log(`Listening on port ${port}`);
+console.log(`Listening on port ${port}`);
+});
+}
+
+
+// ✅ 서버 시작
+startServer().catch(err => {
+  console.error('❌ Failed to start server:', err);
 });

@@ -296,6 +296,9 @@ export function Play() {
         updateDefeatCount();
 
         fetchHallOfFame();
+        console.log('✅ Invite?:', );
+
+        
       }
     } else if (rr === 'agentWin') {
       setStatusMessage("You lose! Try again!");
