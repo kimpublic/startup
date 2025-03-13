@@ -158,6 +158,8 @@ Integrated **Gmail sending API** with **Nodemailer** to send an invitation so th
 Hall of Fame Rankings are processed as Simon does.
 Deployment was soooo confusing. As .env is not recommended to be uploaded online, to deal with environmental parameters, I added the parameters on AWS as secure strings with Parameter Store after adding IAM role to my instance.
 
+## To test Gmail API, I changed some logic because you need to defeat the frontman in order to go to the invite page. Just choose rocks as the agents will always choose scissors. After you defeat the frontman, go to the invite page, and type any name and your email address. I used my Gmail account to send an email as the API requires higher security policies. I limited the number of times that emails can be sent within 5 minutes, which is 10.
+
 ## 🚀 DB/Login deliverable
 
 For this deliverable, I did the following. I checked the box `[x]` and added a description for things I completed.
