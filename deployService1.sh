@@ -18,23 +18,20 @@ printf "\n----> Deploying React bundle $service to $hostname with $key\n"
 # Step 1
 printf "\n----> Build the distribution package\n"
 rm -rf build
-mkdir -p build/public        # ★ public 폴더 미리 만들기
-npm install
-npm run build
-
-cp -rf dist/* build/public/  # 이제 dist/* → build/public 복사 가능!
-
+mkdir -p build/public           # ★ public 폴더까지 생성
+npm install                     # ensure dependencies for Vite, etc.
+npm run build                   # build the React front end
+cp -rf dist/* build/public      # move the front-end files into build/public
 cp package.json build/
 cp package-lock.json build/
-cp service/*.js build
-# cp service/*.json build
+cp service/*.js build           # move the back end service to the target distribution
+# cp service/*.json build       # if needed, uncomment
 
 # Step 2
 printf "\n----> Clearing out previous distribution on the target\n"
 ssh -i "$key" ubuntu@$hostname << ENDSSH
 rm -rf services/${service}
 mkdir -p services/${service}
-mkdir -p services/${service}/public/assets
 ENDSSH
 
 # Step 3

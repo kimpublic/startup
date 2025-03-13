@@ -3,6 +3,8 @@ const cookieParser = require('cookie-parser');
 const bcrypt = require('bcryptjs');
 const uuid = require('uuid');
 const jwt = require('jsonwebtoken');
+const path = require('path');
+
 
 require('dotenv').config();
 const nodemailer = require('nodemailer');
@@ -17,25 +19,45 @@ const authCookieName = 'authToken';
 
 const allowedOrigins = [
   'http://localhost:5173',
-  'http://startup.rockpaperscissorsminusone.link/',
+  'https://startup.rockpaperscissorsminusone.link',
+  'https://www.startup.rockpaperscissorsminusone.link',
 ];
+
+
 
 
 // ✅ CORS 설정 추가
 app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  credentials: true  // 쿠키 포함 허용
+  origin: 'https://startup.rockpaperscissorsminusone.link', // 🔥 프론트엔드 주소 (배포할때랑 개발환경에서 서로 달라야함 개발환경에선 아마 5173?)
+  credentials: true // 쿠키 포함 허용
 }));
+
+app.options('*', cors());
 
 app.use(express.json());
 app.use(cookieParser());
-app.use(express.static('public'));
+
+
+
+// Improved static file serving with proper MIME types
+app.use(express.static('public', {
+  setHeaders: (res, path) => {
+    if (path.endsWith('.js')) {
+      res.setHeader('Content-Type', 'application/javascript');
+    } else if (path.endsWith('.css')) {
+      res.setHeader('Content-Type', 'text/css');
+    }
+  }
+}));
+
+// Handle SPA routing
+app.get('*', (req, res, next) => {
+  // Skip API routes and direct file requests
+  if (req.path.startsWith('/api') || req.path.includes('.')) {
+    return next();
+  }
+  res.sendFile(path.resolve(__dirname, 'public', 'index.html'));
+});
 
 async function initParameters() {
   console.log('🔍 Fetching AWS Parameter Store values...');
@@ -48,8 +70,30 @@ async function initParameters() {
   console.log('🔍 SECRET_KEY:', process.env.SECRET_KEY);
 }
 
+
+(async () => {
+  console.log('Fetching AWS Parameters...');
+  const emailUser = await getParameterValue('/myapp/EMAIL_USER');
+  const emailPass = await getParameterValue('/myapp/EMAIL_PASS');
+  const secretKey = await getParameterValue('/myapp/SECRET_KEY');
+
+  console.log('EMAIL_USER:', emailUser);
+  console.log('EMAIL_PASS:', emailPass ? 'LOADED' : 'MISSING'); // 보안상 직접 표시 X
+  console.log('SECRET_KEY:', secretKey);
+})();
+
 async function startServer() {
   await initParameters();
+
+  console.log('🔍 환경 변수 확인:');
+  console.log('EMAIL_USER:', process.env.EMAIL_USER);
+  console.log('EMAIL_PASS:', process.env.EMAIL_PASS ? 'LOADED' : 'MISSING'); 
+  console.log('SECRET_KEY:', process.env.SECRET_KEY);
+
+  if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+      console.error('❌ 환경 변수가 로드되지 않았습니다! 서버를 시작할 수 없습니다.');
+      process.exit(1); // 서버 실행 중지
+  }
 
   const SECRET_KEY = process.env.SECRET_KEY;
 
@@ -95,10 +139,9 @@ app.get('/api/scores/invites', (req, res) => {
         res.status(500).send({ msg: 'Failed to fetch invite scores' });
     }
 });
-
-
   
 app.post('/api/scores/defeats', (req, res) => {
+  
     const token = req.cookies[authCookieName];
     if (!token) return res.status(401).send({ msg: 'Unauthorized' });
 
@@ -285,7 +328,26 @@ const TIME_FRAME = 5 * 60 * 1000; // 5분 (밀리초)
 // ✅ 이메일 전송 기록 저장 (서버 메모리 사용)
 const emailLogs = {};
 
+app.options('/send-email', (req, res) => {
+  
+  res.sendStatus(204);
+});
+
+
 app.post('/send-email', (req, res) => {
+    console.log('📩 Email API received a request!');
+    
+  console.log('📌 Checking environment variables...');
+  console.log('✅ EMAIL_USER:', process.env.EMAIL_USER);
+  console.log('✅ EMAIL_PASS:', process.env.EMAIL_PASS ? 'LOADED' : 'MISSING');
+
+  if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+      console.error('❌ EMAIL_USER 또는 EMAIL_PASS가 설정되지 않았습니다.');
+      return res.status(500).json({ msg: 'Server email configuration is missing.' });
+  }
+
+  console.log('✅ 요청 바디:', req.body); // << 여기까지 나오면 요청은 정상적으로 도착한 것
+
     const userIp = req.ip; // 유저 식별 (IP 기준)
     const now = Date.now();
 
@@ -304,7 +366,7 @@ app.post('/send-email', (req, res) => {
             return res.status(404).json({ msg: 'User not found' });
         }
 
-    
+        console.log(`✅ User ${user.nickName} (${user.email}) is sending an invitation`);
 
     // ✅ 5분이 지난 이메일 로그 삭제
     emailLogs[userIp] = emailLogs[userIp].filter(timestamp => now - timestamp < TIME_FRAME);

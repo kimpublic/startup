@@ -46,7 +46,7 @@ export function Invite() {
       setCanInvite(updatedData.canInvite); // ✅ 초대 가능 여부 업데이트
 
       // ✅ 이메일 전송 요청
-      const emailResponse = await fetch('http://localhost:4000/send-email', {
+      const emailResponse = await fetch('https://startup.rockpaperscissorsminusone.link/send-email', { // 개발환경에서는 4000이나 5173임임
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

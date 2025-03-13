@@ -1,7 +1,7 @@
 const AWS = require('aws-sdk');
 
 // AWS SSM (Systems Manager) 클라이언트 생성 (리전 설정)
-const ssm = new AWS.SSM({ region: 'ap-northeast-2' });
+const ssm = new AWS.SSM({ region: 'us-east-1' });
 
 /**
  * Parameter Store에서 특정 값을 가져오는 함수
