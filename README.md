@@ -167,6 +167,11 @@ For this deliverable, I did the following. I checked the box `[x]` and added a d
 - [x] **Stores data in MongoDB**
 - [x] **Stores credentials in MongoDB**
 
+Additional Tasks:
+Parameters for MongoDB stored in AWS Parameter Store(Systems Manager)
+Music on/off status is stored in local storage so that the web keeps the same status after refreshing the screen.
+
+
 ## 🚀 WebSocket deliverable
 
 For this deliverable, I did the following. I checked the box `[x]` and added a description for things I completed.
