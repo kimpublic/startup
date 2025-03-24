@@ -4,21 +4,14 @@ const bcrypt = require('bcryptjs');
 const uuid = require('uuid');
 const jwt = require('jsonwebtoken');
 const path = require('path');
-const cors = require('cors');
-const { getParameterValue } = require('./paramStore');
-const nodemailer = require('nodemailer');
 
-const {
-  getUser,
-  addUser,
-  updateUser,
-  getTopDefeats,
-  getTopInvites
-} = require('./database.js');
 
 require('dotenv').config();
+const nodemailer = require('nodemailer');
 
-// Express 서버 설정
+const cors = require('cors');
+const { getParameterValue } = require('./paramStore');
+
 const app = express();
 const port = process.argv.length > 2 ? process.argv[2] : 4000;
 const authCookieName = 'authToken';
@@ -35,7 +28,7 @@ const allowedOrigins = [
 
 // ✅ CORS 설정 추가
 app.use(cors({
-  origin: allowedOrigins, // 
+  origin: 'https://startup.rockpaperscissorsminusone.link', // 🔥 프론트엔드 주소 (배포할때랑 개발환경에서 서로 달라야함 개발환경에선 아마 5173?)
   credentials: true // 쿠키 포함 허용
 }));
 
@@ -105,15 +98,23 @@ async function startServer() {
   const SECRET_KEY = process.env.SECRET_KEY;
 
   
-  app.get('/api/scores/defeats', async (req, res) => {
+let users = [
+    // 예제 데이터
+    // { email: 'test@test.com', password: 'hashedPw', nickName: 'Player1', frontmanDefeats: 3, friendInvites: 2 }
+  ];
+  
+  app.get('/api/scores/defeats', (req, res) => {
     try {
-      const defeatRanking = await getTopDefeats(); 
-      const responseData = defeatRanking.map(user => ({
-        name: user.nickName || user.email,
-        score: user.frontmanDefeats,
-      }));
+        const defeatRanking = users
+            .filter(user => user.frontmanDefeats > 0) // 0점인 유저 제외
+            .map(user => ({
+                name: user.nickName || user.email, 
+                score: user.frontmanDefeats
+            }))
+            .sort((a, b) => b.score - a.score) 
+            .slice(0, 10);
 
-        res.json(responseData);
+        res.json(defeatRanking);
     } catch (error) {
         console.error('Error fetching defeat scores:', error);
         res.status(500).send({ msg: 'Failed to fetch defeat scores' });
@@ -121,34 +122,36 @@ async function startServer() {
 });
 
 
-app.get('/api/scores/invites', async (req, res) => {
+app.get('/api/scores/invites', (req, res) => {
     try {
-        const inviteRanking = await getTopInvites(); 
-        const responseData = inviteRanking.map(user => ({
-          name: user.nickName || user.email,
-          score: user.friendInvites,
-        }));
+        const inviteRanking = users
+            .filter(user => user.friendInvites > 0) // 0점인 유저 제외
+            .map(user => ({
+                name: user.nickName || user.email,
+                score: user.friendInvites
+            }))
+            .sort((a, b) => b.score - a.score)
+            .slice(0, 10);
 
-        res.json(responseData);
+        res.json(inviteRanking);
     } catch (error) {
         console.error('Error fetching invite scores:', error);
         res.status(500).send({ msg: 'Failed to fetch invite scores' });
     }
 });
   
-app.post('/api/scores/defeats', async (req, res) => {
+app.post('/api/scores/defeats', (req, res) => {
   
     const token = req.cookies[authCookieName];
     if (!token) return res.status(401).send({ msg: 'Unauthorized' });
 
     try {
         const { email } = jwt.verify(token, SECRET_KEY);
-        const user = await getUser(email); // DB 조회
+        const user = users.find(u => u.email === email);
         if (!user) return res.status(404).send({ msg: 'User not found' });
-        user.frontmanDefeats = (user.frontmanDefeats || 0) + 1;
-        user.canInvite = true;
 
-        await updateUser(user); 
+        user.frontmanDefeats += 1;
+        user.canInvite = true;
 
         res.send({
             email: user.email,
@@ -164,18 +167,17 @@ app.post('/api/scores/defeats', async (req, res) => {
 });
 
   
-app.post('/api/scores/invites', async (req, res) => {
+app.post('/api/scores/invites', (req, res) => {
     const token = req.cookies[authCookieName];
     if (!token) return res.status(401).send({ msg: 'Unauthorized' });
 
     try {
         const { email } = jwt.verify(token, SECRET_KEY);
-        const user = await getUser(email); // DB에서 찾기
+        const user = users.find(u => u.email === email);
         if (!user) return res.status(404).send({ msg: 'User not found' });
 
-        user.friendInvites = (user.friendInvites || 0) + 1;
+        user.friendInvites += 1;
         user.canInvite = false; // 초대 후 다시 초대 불가
-        await updateUser(user); // DB 업데이트
 
         res.send({
             email: user.email,
@@ -197,21 +199,13 @@ app.post('/api/scores/invites', async (req, res) => {
 app.post('/api/auth/create', async (req, res) => {
   const { email, password } = req.body;
 
-  const existingUser = await getUser(email);
-  if (existingUser) {
+  if (users.find((user) => user.email === email)) {
     return res.status(409).send({ msg: 'Existing user' });
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
-  const newUser = {
-    email,
-    password: hashedPassword,
-    nickName: '',
-    frontmanDefeats: 0,
-    friendInvites: 0,
-    canInvite: false
-  };
-  await addUser(newUser);
+  const newUser = { email, password: hashedPassword, nickName: '', frontmanDefeats: 0, friendInvites: 0, canInvite: false };
+  users.push(newUser);
 
   const token = jwt.sign({ email }, SECRET_KEY, { expiresIn: '1h' });
   res.cookie(authCookieName, token, { httpOnly: true, secure: true, sameSite: 'strict' });
@@ -222,12 +216,14 @@ app.post('/api/auth/create', async (req, res) => {
     frontmanDefeats: newUser.frontmanDefeats,
     friendInvites: newUser.friendInvites
   });
+  
+  
 });
 
 // ✅ 로그인 (Authenticate User)
 app.post('/api/auth/login', async (req, res) => {
   const { email, password } = req.body;
-  const user = await getUser(email);
+  const user = users.find((u) => u.email === email);
 
   if (!user || !(await bcrypt.compare(password, user.password))) {
     return res.status(401).send({ msg: 'Unauthorized: Check your email or password' });
@@ -242,7 +238,7 @@ app.post('/api/auth/login', async (req, res) => {
     frontmanDefeats: user.frontmanDefeats,
     friendInvites: user.friendInvites
   });
-
+  
 });
 
 // ✅ 로그아웃 (Logout User)
@@ -252,66 +248,76 @@ app.delete('/api/auth/logout', (req, res) => {
 });
 
 // ✅ 닉네임 변경 (Update Nickname)
-app.post('/api/user/nickname', async (req, res) => {
-  const token = req.cookies[authCookieName];
-  if (!token || typeof token !== 'string') {
-    return res.status(401).send({ msg: 'Unauthorized: No token provided' });
-  }
+app.post('/api/user/nickname', (req, res) => {
+    const token = req.cookies[authCookieName];
+  
+    // ✅ 토큰이 없거나 잘못된 타입일 경우 예외 처리
+    if (!token || typeof token !== 'string') {
+      return res.status(401).send({ msg: 'Unauthorized: No token provided' });
+    }
+  
+    try {
+      const { email } = jwt.verify(token, SECRET_KEY);
+      const user = users.find((u) => u.email === email);
+  
+      if (!user) {
+        return res.status(404).send({ msg: 'User not found' });
+      }
+  
+      // ✅ 닉네임 검증 (공백 문자열도 예외 처리)
+      const { nickName } = req.body;
+      if (!nickName || nickName.trim().length === 0) {
+        return res.status(400).send({ msg: 'Nickname is required and cannot be empty' });
+      }
+  
+      user.nickName = nickName.trim(); // 앞뒤 공백 제거 후 저장
+      res.send({
+        email: user.email,
+        nickName: user.nickName,
+        frontmanDefeats: user.frontmanDefeats,
+        friendInvites: user.friendInvites
+      });
+      
+      
+  
+    } catch (error) {
+      if (error.name === 'TokenExpiredError') {
+        return res.status(401).send({ msg: 'Unauthorized: Token expired' });
+      } else if (error.name === 'JsonWebTokenError') {
+        return res.status(401).send({ msg: 'Unauthorized: Invalid token' });
+      }
+      return res.status(401).send({ msg: 'Unauthorized: Token verification failed' });
+    }
+  });
 
-  try {
+
+
+app.get('/api/user/stats', (req, res) => {
+const token = req.cookies[authCookieName];
+if (!token) return res.status(401).send({ msg: 'Unauthorized' });
+
+try {
     const { email } = jwt.verify(token, SECRET_KEY);
-    const user = await getUser(email);
+    const user = users.find((u) => u.email === email);
     if (!user) return res.status(404).send({ msg: 'User not found' });
 
-    const { nickName } = req.body;
-    if (!nickName || nickName.trim().length === 0) {
-      return res.status(400).send({ msg: 'Nickname is required and cannot be empty' });
-    }
-
-    user.nickName = nickName.trim();
-    await updateUser(user);
+    console.log('닉네임 호출 완료:', user);
 
     res.send({
-      email: user.email,
-      nickName: user.nickName,
-      frontmanDefeats: user.frontmanDefeats,
-      friendInvites: user.friendInvites
+    nickName: user.nickName || 'Guest',
+    frontmanDefeats: user.frontmanDefeats || 0,
+    friendInvites: user.friendInvites || 0,
+    canInvite: user.canInvite || false,
     });
-  } catch (error) {
+} catch (error) {
     if (error.name === 'TokenExpiredError') {
-      return res.status(401).send({ msg: 'Unauthorized: Token expired' });
+        return res.status(401).send({ msg: 'Unauthorized: Token expired' });
     } else if (error.name === 'JsonWebTokenError') {
-      return res.status(401).send({ msg: 'Unauthorized: Invalid token' });
+        return res.status(401).send({ msg: 'Unauthorized: Invalid token' });
     }
     return res.status(401).send({ msg: 'Unauthorized: Token verification failed' });
-  }
-});
+}
 
-
-
-app.get('/api/user/stats', async (req, res) => {
-  const token = req.cookies[authCookieName];
-  if (!token) return res.status(401).send({ msg: 'Unauthorized' });
-
-  try {
-    const { email } = jwt.verify(token, SECRET_KEY);
-    const user = await getUser(email);
-    if (!user) return res.status(404).send({ msg: 'User not found' });
-
-    res.send({
-      nickName: user.nickName || 'Guest',
-      frontmanDefeats: user.frontmanDefeats || 0,
-      friendInvites: user.friendInvites || 0,
-      canInvite: user.canInvite || false,
-    });
-  } catch (error) {
-    if (error.name === 'TokenExpiredError') {
-      return res.status(401).send({ msg: 'Unauthorized: Token expired' });
-    } else if (error.name === 'JsonWebTokenError') {
-      return res.status(401).send({ msg: 'Unauthorized: Invalid token' });
-    }
-    return res.status(401).send({ msg: 'Unauthorized: Token verification failed' });
-  }
 });
 
 
@@ -328,7 +334,7 @@ app.options('/send-email', (req, res) => {
 });
 
 
-app.post('/send-email', async (req, res) => {
+app.post('/send-email', (req, res) => {
     console.log('📩 Email API received a request!');
     
   console.log('📌 Checking environment variables...');
@@ -355,12 +361,12 @@ app.post('/send-email', async (req, res) => {
     }
 
     const { email } = jwt.verify(token, SECRET_KEY);
-    const user = await getUser(email);
-      if (!user) {
-          return res.status(404).json({ msg: 'User not found' });
-      }
+        const user = users.find(u => u.email === email);
+        if (!user) {
+            return res.status(404).json({ msg: 'User not found' });
+        }
 
-    console.log(`✅ User ${user.nickName} (${user.email}) is sending an invitation`);
+        console.log(`✅ User ${user.nickName} (${user.email}) is sending an invitation`);
 
     // ✅ 5분이 지난 이메일 로그 삭제
     emailLogs[userIp] = emailLogs[userIp].filter(timestamp => now - timestamp < TIME_FRAME);

@@ -10,6 +10,10 @@ export function Invite() {
   const [canInvite, setCanInvite] = useState(false);
   const [message, setMessage] = useState('');
 
+  const baseUrl = import.meta.env.PROD
+  ? 'https://startup.rockpaperscissorsminusone.link'
+  : 'http://localhost:4000';
+
   // ✅ 백엔드에서 현재 유저 초대 가능 여부 가져오기
   async function fetchUserStats() {
     try {
@@ -37,7 +41,8 @@ export function Invite() {
       // ✅ 초대 횟수 증가 요청 (백엔드 API 호출)
       const inviteResponse = await fetch('/api/scores/invites', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' }
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include' // ✅ 쿠키를 포함하여 요청
       });
 
       if (!inviteResponse.ok) throw new Error('Failed to update invite count');
@@ -46,7 +51,7 @@ export function Invite() {
       setCanInvite(updatedData.canInvite); // ✅ 초대 가능 여부 업데이트
 
       // ✅ 이메일 전송 요청
-      const emailResponse = await fetch('https://startup.rockpaperscissorsminusone.link/send-email', { // 개발환경에서는 4000이나 5173임임
+      const emailResponse = await fetch(`${baseUrl}/send-email`, { // 개발환경에서는 4000이나 5173임임
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

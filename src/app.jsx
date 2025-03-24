@@ -25,9 +25,20 @@ export default function App() {
   const [userEmail, setUserEmail] = React.useState(savedEmail);
   const [nickName, setNickName] = React.useState(savedNick);
 
-  // 배경음악 관련 상태
-  const [musicOn, setMusicOn] = React.useState(false);
-  const [volume, setVolume] = React.useState(0.3);
+  // -------------------------------------------------------------------
+  // 🎵 배경음악 관련 상태를 localStorage에서 불러오고, 변경 시 다시 저장하기
+  // -------------------------------------------------------------------
+  const savedMusicOn = localStorage.getItem('musicOn');
+  const savedVolume = localStorage.getItem('musicVolume');
+
+  // 문자열로 저장되어 있으니, JSON.parse / parseFloat로 변환
+  const [musicOn, setMusicOn] = React.useState(
+    savedMusicOn !== null ? JSON.parse(savedMusicOn) : false
+  );
+  const [volume, setVolume] = React.useState(
+    savedVolume !== null ? parseFloat(savedVolume) : 0.3
+  );
+
   const audioRef = React.useRef(null);
 
   
@@ -35,16 +46,35 @@ export default function App() {
   React.useEffect(() => {
     function enableAudio() {
       if (audioRef.current) {
-        audioRef.current.muted = false; // 유저 클릭 후 음소거 해제
-        audioRef.current.play().catch(error => console.log('Autoplay error:', error));
-        audioRef.current.play(); // 음악 자동 재생
-        setMusicOn(true); // 종 아이콘도 소리 켜진 상태로 변경
-        document.removeEventListener('click', enableAudio); // 이벤트 리스너 제거
+        // 1) localStorage에서 musicOn=false인지 확인 (이미 mute 원하는 유저라면 자동재생 X)
+       const savedMusicOn = localStorage.getItem('musicOn');
+       if (savedMusicOn !== null && JSON.parse(savedMusicOn) === false) {
+         // ❌ 유저가 mute를 원하면 그냥 return → 자동재생 안 함
+         return;
+       }
+
+       // ✅ mute가 아니거나 설정 없으면 자동재생 로직 수행
+       audioRef.current.muted = false; 
+       audioRef.current.play().catch(error => console.log('Autoplay error:', error));
+       setMusicOn(true); 
+       document.removeEventListener('click', enableAudio);
       }
     }
     document.addEventListener('click', enableAudio);
     return () => document.removeEventListener('click', enableAudio);
   }, []);
+
+  // -------------------------------------------------------------------
+  // 🎵 musicOn, volume 값이 바뀔 때마다 localStorage에 저장
+  // -------------------------------------------------------------------
+  React.useEffect(() => {
+    localStorage.setItem('musicOn', JSON.stringify(musicOn));
+  }, [musicOn]);
+
+  React.useEffect(() => {
+    // toString()으로 변환해주거나 String() 써도 됩니다
+    localStorage.setItem('musicVolume', volume.toString());
+  }, [volume]);
 
   // ✅ 음악 ON/OFF 토글 기능
   React.useEffect(() => {
