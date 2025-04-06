@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../app.css';
 import './play.css';
+import { GameNotifier, GameEvent } from './gameNotifier';
 
 const STAGE_INFO = [
   { agentName: 'Agent Donggeurami', sameProbability: 1.0, timeLimit: 2, imageSrc: 'prt_1.png' }, // 0.3 5
@@ -26,6 +27,7 @@ const SAME_OPTIONS1 = [ // original
   ['r','r'],
   ['p','p'],
 ];
+
 
 
 // 헬퍼: (side='l'|'r', choice='s'|'r'|'p') => "man_l_r_2.png"
@@ -78,6 +80,10 @@ export function Play() {
 
   const loseSound = useRef(new Audio('/lose.mp3')); //  패배 효과음
   const victorySound = useRef(new Audio('/victory.mp3')); //  프론트맨 격파 효과음
+
+  // 다른 유저 소식 notification
+  const [notices, setNotices] = useState([]);
+
 
   
   useEffect(() => {
@@ -189,6 +195,10 @@ export function Play() {
       // 왼/오 다 골랐으면 finalPick
       if(!userLeft||!userRight){
         setStatusMessage("Time's up! You didn't pick both. You lose!");
+        GameNotifier.broadcastEvent(nickName, GameEvent.Fail, {
+          stage: stage,
+          reason: 'timeout',
+        });
         loseSound.current.play().catch(() => {});
         setPhase('result');
       } else {
@@ -204,6 +214,10 @@ export function Play() {
         const aF= decideAgentFinal(agentLeft, agentRight, userLeft, userRight);
         setAgentFinal(aF);
         setStatusMessage("Time's up! You didn't pick final. You lose!");
+        GameNotifier.broadcastEvent(nickName, GameEvent.Fail, {
+          stage: stage,
+          reason: 'timeout',
+        });
         loseSound.current.play().catch(() => {});
         setPhase('result');
       } else {
@@ -261,7 +275,7 @@ export function Play() {
   // -------------------------------------------------------------------
   //  finishRound => result
   // -------------------------------------------------------------------
-  function finishRound() {
+  async function finishRound() {
     const aF = decideAgentFinal(agentLeft, agentRight, userLeft, userRight);
     setAgentFinal(aF);
   
@@ -297,11 +311,27 @@ export function Play() {
 
         fetchHallOfFame();
         console.log('✅ Invite?:', );
+        try {
+          const response = await fetch('/api/scores/defeats');
+          const data = await response.json();
+          const index = data.findIndex(user => user.name === nickName);
+    
+          GameNotifier.broadcastEvent(nickName, GameEvent.Defeat, {
+            rank: index !== -1 ? index + 1 : null,
+          });
+        } catch (error) {
+          console.error('⚠️ Failed to fetch rank for WebSocket message:', error);
+        }
 
         
       }
     } else if (rr === 'agentWin') {
       setStatusMessage("You lose! Try again!");
+
+      GameNotifier.broadcastEvent(nickName, GameEvent.Fail, {
+        stage: stage,
+        reason: 'lose',
+      });
 
       loseSound.current.play().catch(() => {});
     } else {
@@ -476,6 +506,45 @@ function doesDraw(a, u) {
 }
 
 
+// Inbound 메시지 핸들링
+useEffect(() => {
+  function handleEvent(event) {
+    if (!event || !event.type || event.from === nickName) return;
+
+    // 1. 프론트맨 이겼을 때
+    if (event.type === GameEvent.Defeat) {
+      const rank = event.value.rank;
+      if (rank) {
+        // ✅ (1) 이겼고 순위권 안에 있음
+        addNotice(`🎉 ${event.from} defeated the Frontman and is now ranked #${rank}!`);
+      } else {
+        // ✅ (2) 이겼지만 순위권 밖
+        addNotice(`🎉 ${event.from} defeated the Frontman!`);
+      }
+    }
+
+    // 2. 패배했을 때
+    if (event.type === GameEvent.Fail) {
+      const stageNum = event.value.stage + 1;
+      const reason = event.value.reason === 'timeout' ? 'timed out ⏱️' : 'lost the match ❌';
+      // ✅ (3) 졌을 때
+      addNotice(`💀 ${event.from} failed at Stage ${stageNum} (${reason})`);
+    }
+  }
+
+  GameNotifier.addHandler(handleEvent);
+  return () => GameNotifier.removeHandler(handleEvent);
+}, [nickName]);
+
+function addNotice(msg) {
+  const id = Date.now(); // 고유 ID 생성
+  setNotices((prev) => [...prev, {id, msg}]);
+  setTimeout(() => {
+    setNotices((prev) => prev.filter((notice) => notice.id !== id)); // 5초 후 삭제
+  }, 5000); // 5초 후 사라짐
+}
+
+
   return (
 
     gameOver ? (
@@ -498,6 +567,14 @@ function doesDraw(a, u) {
     )
     : (
     <main>
+      {/* 알림 박스들 */}
+      <div className="notifications-container">
+        {notices.map((n) => (
+          <div key={n.id} className="notification-box">
+            {n.msg}
+          </div>
+        ))}
+      </div>
       {/* 닉네임 */}
       <div className="player-info">
         Player: <span className="player-email">{nickName}</span>

@@ -7,7 +7,6 @@ const path = require('path');
 const cors = require('cors');
 const { getParameterValue } = require('./paramStore');
 const nodemailer = require('nodemailer');
-const { peerProxy } = require('./peerProxy'); // ← 상대 경로 맞게 조정
 
 
 const {
@@ -421,12 +420,9 @@ app.post('/send-email', async (req, res) => {
 });
 
 
-const httpService = app.listen(port, () => {
-  console.log(`Listening on port ${port}`);
+app.listen(port, () => {
+console.log(`Listening on port ${port}`);
 });
-
-peerProxy(httpService); // ← 여기서 WebSocket 서버를 연결
-
 }
 
 
