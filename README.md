@@ -176,8 +176,18 @@ Music on/off status is stored in local storage so that the web keeps the same st
 
 For this deliverable, I did the following. I checked the box `[x]` and added a description for things I completed.
 
-- [ ] **Backend listens for WebSocket connection** - I did not complete this part of the deliverable.
-- [ ] **Frontend makes WebSocket connection** - I did not complete this part of the deliverable.
-- [ ] **Data sent over WebSocket connection** - I did not complete this part of the deliverable.
-- [ ] **WebSocket data displayed** - I did not complete this part of the deliverable.
-- [ ] **Application is fully functional** - I did not complete this part of the deliverable.
+- [x] **Backend listens for WebSocket connection**
+- [x] **Frontend makes WebSocket connection**
+- [x] **Data sent over WebSocket connection**
+- [x] **WebSocket data displayed**
+- [x] **Application is fully functional**
+
+WebSocket integrated into my startup app both on backend and frontend, similar to the Simon App, to display game-related events as notifications in the top-left corner.
+These notifications appear in real time not only on the Play page but also on the Hall of Fame page.
+Notifications are shown both when a user defeats the Frontman and when they lose.
+
+Additional Tasks:
+A ranking update button was added to the Hall of Fame page, allowing users to manually refresh the ranking boards.
+The height of the status board is now fixed, so it remains visually consistent even when line breaks occur in the content.
+
+Game logic is now updated to the original logic. 
