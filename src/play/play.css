@@ -34,6 +34,11 @@ main {
     font-family: 'Impact', sans-serif;  
     margin-bottom: 10px;
     color: #FFFFFF;
+    height: 85px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
 }
 
 .status-board .status-medium {
