@@ -5,10 +5,10 @@ import './play.css';
 import { GameNotifier, GameEvent } from './gameNotifier';
 
 const STAGE_INFO = [
-  { agentName: 'Agent Donggeurami', sameProbability: 1.0, timeLimit: 2, imageSrc: 'prt_1.png' }, // 0.3 5
-  { agentName: 'Agent Semo', sameProbability: 1.0, timeLimit: 2, imageSrc: 'prt_2.png' }, // 0.1 4 
-  { agentName: 'Agent Nemo', sameProbability: 1.0, timeLimit: 2, imageSrc: 'prt_3.png' }, // 3
-  { agentName: 'Agent Frontman', sameProbability: 1.0, timeLimit: 2, imageSrc: 'prt_5.png' },
+  { agentName: 'Agent Donggeurami', sameProbability: 0.3, timeLimit: 5, imageSrc: 'prt_1.png' }, // 0.3 5
+  { agentName: 'Agent Semo', sameProbability: 0.1, timeLimit: 4, imageSrc: 'prt_2.png' }, // 0.1 4 
+  { agentName: 'Agent Nemo', sameProbability: 0.0, timeLimit: 3, imageSrc: 'prt_3.png' }, // 3
+  { agentName: 'Agent Frontman', sameProbability: 0.0, timeLimit: 2, imageSrc: 'prt_5.png' },
 ];
 
 const DIFFERENT_OPTIONS = [
@@ -16,13 +16,13 @@ const DIFFERENT_OPTIONS = [
   ['s','p'], ['p','s'],
   ['r','p'], ['p','r'],
 ];
-const SAME_OPTIONS = [
+const SAME_OPTIONS_for_developer = [
   ['s','s'],
   ['s','s'],
   ['s','s'],
 ];
 
-const SAME_OPTIONS1 = [ // original
+const SAME_OPTIONS = [ // original
   ['s','s'],
   ['r','r'],
   ['p','p'],
