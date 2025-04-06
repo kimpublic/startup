@@ -18,18 +18,32 @@ const GameEvent = {
   class GameEventNotifier {
     events = [];
     handlers = [];
+    reconnectInterval = 3000; // 재연결 시도 간격 (3초)
   
     constructor() {
+      this.connect();
+    }
+  
+    connect() {
       const port = window.location.port;
       const protocol = window.location.protocol === 'http:' ? 'ws' : 'wss';
-      this.socket = new WebSocket(`${protocol}://${window.location.hostname}:${port}/ws`);
+      const url = `${protocol}://${window.location.hostname}:${port}/ws`;
+  
+      this.socket = new WebSocket(url);
   
       this.socket.onopen = () => {
+        console.log('🟢 WebSocket connected');
         this.receiveEvent(new EventMessage('system', GameEvent.System, { msg: 'connected' }));
       };
   
       this.socket.onclose = () => {
+        console.warn('🔴 WebSocket disconnected. Reconnecting...');
         this.receiveEvent(new EventMessage('system', GameEvent.System, { msg: 'disconnected' }));
+        setTimeout(() => this.connect(), this.reconnectInterval);
+      };
+  
+      this.socket.onerror = (err) => {
+        console.error('⚠️ WebSocket error:', err);
       };
   
       this.socket.onmessage = async (msg) => {
@@ -37,28 +51,28 @@ const GameEvent = {
           const event = JSON.parse(await msg.data.text());
           this.receiveEvent(event);
         } catch (e) {
-          console.error('Invalid WebSocket message:', e);
+          console.error('❌ Invalid WebSocket message:', e);
         }
       };
     }
-    
-    removeHandler(handler) {
-        this.handlers = this.handlers.filter((h) => h !== handler);
-      }
-      
   
-    // 서버에 이벤트 전송
     broadcastEvent(from, type, value) {
       const event = new EventMessage(from, type, value);
-      this.socket.send(JSON.stringify(event));
+      if (this.socket.readyState === WebSocket.OPEN) {
+        this.socket.send(JSON.stringify(event));
+      } else {
+        console.warn('⛔ WebSocket is not open. Cannot send:', event);
+      }
     }
   
-    // 외부에서 이벤트 수신 처리기 등록
     addHandler(handler) {
       this.handlers.push(handler);
     }
   
-    // 서버로부터 받은 메시지 처리
+    removeHandler(handler) {
+      this.handlers = this.handlers.filter((h) => h !== handler);
+    }
+  
     receiveEvent(event) {
       this.events.push(event);
       this.handlers.forEach((handler) => handler(event));

@@ -1,10 +1,16 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import './halloffame.css';
 import '../app.css';
+import { GameNotifier, GameEvent } from '../play/gameNotifier';
+
+
 
 export function Halloffame() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const [notices, setNotices] = React.useState([]);
+
 
   const [userStats, setUserStats] = React.useState({
     nickName: 'Guest',
@@ -12,25 +18,12 @@ export function Halloffame() {
     friendInvites: 0,
   });
 
-  const [defeatScores, setDefeatScores] = React.useState([]);
-  const [inviteScores, setInviteScores] = React.useState([]);
-
-  async function fetchHallOfFame() {
-    try {
-      const response = await fetch('/api/scores/defeats');
-      if (!response.ok) throw new Error('Failed to fetch rankings');
-      const updatedDefeatScores = await response.json();
-      
-      // ✅ 최신 Hall of Fame 데이터로 상태 업데이트
-      setDefeatScores(updatedDefeatScores);
-    } catch (error) {
-      console.error('Error fetching Hall of Fame:', error);
-    }
-  }
-
+  
   async function fetchUserStats() {
     try {
-      const response = await fetch('/api/user/stats');
+      const response = await fetch('/api/user/stats', {
+        credentials: 'include',
+    });
       if (!response.ok) throw new Error('Failed to fetch user stats');
       const data = await response.json();
 
@@ -43,39 +36,30 @@ export function Halloffame() {
       console.error('Error fetching user stats:', error);
     }
   }
-  
-  
-  React.useEffect(() => {
-    
-    fetchUserStats();
-  }, []);
 
-  // ✅ useEffect 추가 (컴포넌트 마운트 시 유저 정보 및 Hall of Fame 불러오기)
-  React.useEffect(() => {
-    fetchUserStats();
-    fetchHallOfFame(); // 🔥 여기 추가!
-  }, []);
+  const [defeatScores, setDefeatScores] = React.useState([]);
+  const [inviteScores, setInviteScores] = React.useState([]);
 
+  // 하나의 함수로 defeats + invites 둘 다 가져옴
+  async function fetchScores() {
+    try {
+      const defeatResponse = await fetch('/api/scores/defeats');
+      const inviteResponse = await fetch('/api/scores/invites');
+      if (!defeatResponse.ok || !inviteResponse.ok) throw new Error('Failed to fetch rankings');
 
-  React.useEffect(() => {
-    async function fetchScores() {
-      try {
-        const defeatResponse = await fetch('/api/scores/defeats');
-        const inviteResponse = await fetch('/api/scores/invites');
-        if (!defeatResponse.ok || !inviteResponse.ok) throw new Error('Failed to fetch rankings');
-  
-        const defeatData = await defeatResponse.json();
-        const inviteData = await inviteResponse.json();
-  
-        setDefeatScores(Array.isArray(defeatData) ? defeatData : []);
-        setInviteScores(Array.isArray(inviteData) ? inviteData : []);
-      } catch (error) {
-        console.error('Error fetching scores:', error);
-      }
+      const defeatData = await defeatResponse.json();
+      const inviteData = await inviteResponse.json();
+      setDefeatScores(Array.isArray(defeatData) ? defeatData : []);
+      setInviteScores(Array.isArray(inviteData) ? inviteData : []);
+    } catch (error) {
+      console.error('Error fetching scores:', error);
     }
+  }
+
+  React.useEffect(() => {
+    fetchUserStats();
     fetchScores();
-  }, []);
-  
+  }, [location]);
 
   const defeatRows = defeatScores.length ? (
     defeatScores.slice(0, 10).map((score, index) => (
@@ -109,44 +93,52 @@ export function Halloffame() {
     </tr>
   );
 
-  // ✅ 새로운 defeat 기록 추가 함수 (10위까지만 유지)
-  async function updateDefeatScores(newEntry) {
-    try {
-      const response = await fetch('/api/scores/defeats', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newEntry),
-      });
+  React.useEffect(() => {
+    function handleEvent(event) {
+      if (!event || !event.type || event.from === userStats.nickName) return;
   
-      if (!response.ok) throw new Error('Failed to update defeat scores');
-      const updatedScores = await response.json();
-      setDefeatScores(updatedScores);
-    } catch (error) {
-      console.error('Error updating defeat scores:', error);
+      if (event.type === GameEvent.Defeat) {
+        const rank = event.value.rank;
+        if (rank) {
+          addNotice(`🎉 ${event.from} defeated the Frontman and is now ranked #${rank}!`);
+        } else {
+          addNotice(`🎉 ${event.from} defeated the Frontman!`);
+        }
+      }
+  
+      if (event.type === GameEvent.Fail) {
+        const stageNum = event.value.stage + 1;
+        const reason = event.value.reason === 'timeout' ? 'timed out ⏱️' : 'lost the match ❌';
+        addNotice(`💀 ${event.from} failed at Stage ${stageNum} (${reason})`);
+      }
     }
-  }
   
-  async function updateInviteScores(newEntry) {
-    try {
-      const response = await fetch('/api/scores/invites', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newEntry),
-      });
-  
-      if (!response.ok) throw new Error('Failed to update invite scores');
-      const updatedScores = await response.json();
-      setInviteScores(updatedScores);
-    } catch (error) {
-      console.error('Error updating invite scores:', error);
-    }
+    GameNotifier.addHandler(handleEvent);
+    return () => GameNotifier.removeHandler(handleEvent);
+  }, [userStats.nickName]);
+
+  function addNotice(msg) {
+    const id = Date.now(); // 고유 ID
+    setNotices(prev => [...prev, { id, msg }]);
+    setTimeout(() => {
+      setNotices(prev => prev.filter(n => n.id !== id));
+    }, 5000); // 5초 뒤 제거
   }
   
   
 
-
+  
   return (
     <main>
+      {/* 알림 박스들 */}
+      <div className="notifications-container">
+        {notices.map((n) => (
+          <div key={n.id} className="notification-box">
+            {n.msg}
+          </div>
+        ))}
+      </div>
+
       <h1>"Behold thy glory in the Hall of Fame."</h1>
 
       {/* 현재 로그인 유저의 통계 정보를 제목 아래에 표시 */}
@@ -168,6 +160,12 @@ export function Halloffame() {
       </tr>
     </tbody>
   </table>
+</div>
+
+<div style={{ textAlign: 'center', margin: '1em 0' }}>
+  <button onClick={fetchScores} className="halloffame-btn" style={{ fontSize: '1rem' }}>
+    🔄 Update the Rankings
+  </button>
 </div>
 
 

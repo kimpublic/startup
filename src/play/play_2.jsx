@@ -89,7 +89,9 @@ export function Play() {
   useEffect(() => {
     async function fetchUserStats() {
       try {
-        const response = await fetch('/api/user/stats');
+        const response = await fetch('/api/user/stats', {
+          credentials: 'include', // 쿠키 포함해서 보내기
+        });
         if (!response.ok) throw new Error('Failed to fetch user stats');
         const data = await response.json();
         setNickName(data.nickName || 'Guest'); // 닉네임이 없으면 'Guest' 표시
@@ -546,8 +548,17 @@ function addNotice(msg) {
 
 
   return (
+    <>
+      {/* 알림 박스들 */}
+      <div className="notifications-container">
+        {notices.map((n) => (
+          <div key={n.id} className="notification-box">
+            {n.msg}
+          </div>
+        ))}
+      </div>
 
-    gameOver ? (
+    {gameOver ? (
       <main>
       <div className="victory-screen">
         <h1 className="victory-title">🏆 Victory! 🏆</h1>
@@ -567,14 +578,6 @@ function addNotice(msg) {
     )
     : (
     <main>
-      {/* 알림 박스들 */}
-      <div className="notifications-container">
-        {notices.map((n) => (
-          <div key={n.id} className="notification-box">
-            {n.msg}
-          </div>
-        ))}
-      </div>
       {/* 닉네임 */}
       <div className="player-info">
         Player: <span className="player-email">{nickName}</span>
@@ -752,6 +755,7 @@ function addNotice(msg) {
       </div>
       <br/>
     </main>
-    )
+    )}
+    </>
   );
 }

@@ -248,11 +248,18 @@ main {
     box-shadow: 0 0 5px #000000aa;
     font-size: 14px;
     max-width: 280px;
-    animation: fadeInOut 0.3s ease-in-out;
+    animation: fadeIn 0.3s ease-in-out, 
+    fadeOut 0.3s ease-in-out 4.5s forwards;
   }
   
-  @keyframes fadeInOut {
+  @keyframes fadeIn {
     from { opacity: 0; transform: translateY(-5px); }
     to { opacity: 1; transform: translateY(0); }
   }
+
+  @keyframes fadeOut {
+    from { opacity: 1; transform: translateY(0); }
+    to { opacity: 0; transform: translateY(-5px); }
+  }
+  
   
